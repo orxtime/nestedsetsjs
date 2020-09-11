@@ -35,12 +35,6 @@ var subgroup_node_id2 = NestedSet.addNode(group_node2_id, 6)
 console.log(NestedSet.debug())
 ```
 
-## Properties
-- Structure (Nodes)
-- Data (Items)
-
-
-
 ## Methods
 
 
@@ -174,3 +168,25 @@ Checks if a node is the end of a branch
 
 ### debug()
 Displays information about nodes and points in the console
+
+
+## Properties
+- Data (Items)
+- Structure (Nodes)
+
+### Structure
+```
+[
+  {
+    _id: 1, // ID node
+    lkey: 1, // left key
+    rkey: 14, // right key
+    depth: 0, // depth
+    childs: 2, // count childs
+    parent_id: 0, // ID parent node
+    item_id: 1, // ID item from property Data
+    data: { title: 'Root' } // item with ID item_id from property Data
+  },
+  ...
+]
+```
