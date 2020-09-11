@@ -22,92 +22,103 @@ var subgroup_node_id2 = NestedSet.addNode(group_node2_id, 6)
 console.log(NestedSet.debug())
 ```
 
+
 ## Properties
 - Structure (Nodes)
 - Data (Items)
 
+
+
 ## Methods
 ### Work with data
 
-Sets data for an item
 ```
 setItem(id, data)
 ```
+Sets data for an item
 id - ID item
 data - Stored data
 
-Example
+> *Example*
 ```
 setItem(1, { title: "Root"})
 ```
-Removes an item with its dependent nodes
+
+
 ```
 removeItem(id)
 ```
+Removes an item with its dependent nodes
 id - ID item
 
-Example
+> *Example*
 ```
 removeItem(1)
 ```
 
+
 ### Work with structure
 
-Initializes the Nested Sets structure. Adds a root node and sets an item for it
 ```
 addRoot (item_id)
 ```
+Initializes the Nested Sets structure. Adds a root node and sets an item for it
 item_id - item ID
 
-Example
+> *Example*
 ```
 addRoot (1)
 ```
 
-Adds a new node to the specified parent node and sets an item for it
+
 ```
 addNode (target_node_id, item_id)
 ```
+Adds a new node to the specified parent node and sets an item for it
 target_node_id - parent node ID
 item_id - item ID
 
-Example
+> *Example*
 ```
 addNode (1, 1)
 ```
 
-Gets a node by ID
+
 ```
 getNode (node_id, asCopy)
 ```
+Gets a node by ID
 node_id - node ID
 asCopy - true (will return a copy of the object) / false or undefined (will return the object itself)
 
-Example
+> *Example*
 ```
 getNode (1)
 ```
 
-Removes a node by its ID
+
 ```
 removeNode (node_id)
 ```
+Removes a node by its ID
 node_id - node ID
 
-Example
+> *Example*
 ```
 removeNode (1)
 ```
 
-Returns all nodes (Structure property)
+
 ```
 getNodes ()
 ```
+Returns all nodes (Structure property)
 
-Removes all nodes (items are not destroyed)
+
 ```
 removeNodes ()
 ```
+Removes all nodes (items are not destroyed)
 
 Returns the first parent for the node
 ```
@@ -115,7 +126,7 @@ getParent (node_id)
 ```
 node_id - node ID
 
-Example
+> *Example*
 ```
 getParent (5)
 ```
@@ -126,63 +137,71 @@ getParents (node_id)
 ```
 node_id - node ID
 
-Example
+> *Example*
 ```
 getParents (5)
 ```
 
-Returns nested nodes in a node
+
 ```
 getChilds (node_id, depth)
 ```
+Returns nested nodes in a node
 node_id - node ID
 depth - nesting depth
 
-Example
+> *Example*
 ```
 getChilds (1, 1)
 ```
 
-Returns the entire branch that contains the node
+
 ```
 getBranch (node_id)
 ```
+Returns the entire branch that contains the node
 node_id - node ID
 
-Example
+> *Example*
 ```
 getBranch (5)
 ```
 
-Returns the entire structure (nodes and items)
+
 ```
 getTree ()
 ```
+Returns the entire structure (nodes and items)
 
-Removes all items and all nodes
+
 ```
 clearAll ()
 ```
+Removes all items and all nodes
 
-Checks if a node is root
+
 ```
 isRoot (node_id)
 ```
+Checks if a node is root
 node_id - node ID
 
-Checks if a node is a parent
+
 ```
 isBranch (node_id)
 ```
+Checks if a node is a parent
 node_id - node ID
 
-Checks if a node is the end of a branch
+
 ```
 isLeaf (node_id)
 ```
+Checks if a node is the end of a branch
 node_id - node ID
 
-Displays information about nodes and points in the console
+
 ```
 debug ()
 ```
+Displays information about nodes and points in the console
