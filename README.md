@@ -39,7 +39,7 @@ Sets data for an item
 
 > *Example*
 ```
-setItem(1, { title: "Root"})
+NestedSet.setItem(1, { title: "Root"})
 ```
 
 
@@ -50,7 +50,7 @@ Removes an item with its dependent nodes
 
 > *Example*
 ```
-removeItem(1)
+NestedSet.removeItem(1)
 ```
 
 
@@ -60,7 +60,7 @@ Initializes the Nested Sets structure. Adds a root node and sets an item for it
 
 > *Example*
 ```
-addRoot(1)
+NestedSet.addRoot(1)
 ```
 
 
@@ -71,7 +71,7 @@ Adds a new node to the specified parent node and sets an item for it
 
 > *Example*
 ```
-addNode(1, 1)
+NestedSet.addNode(1, 1)
 ```
 
 
@@ -82,7 +82,7 @@ Gets a node by ID
 
 > *Example*
 ```
-getNode(1)
+NestedSet.getNode(1)
 ```
 
 
@@ -92,7 +92,7 @@ Removes a node by its ID
 
 > *Example*
 ```
-removeNode(1)
+NestedSet.removeNode(1)
 ```
 
 
@@ -112,7 +112,7 @@ Returns the first parent for the node
 
 > *Example*
 ```
-getParent(5)
+NestedSet.getParent(5)
 ```
 
 
@@ -122,7 +122,7 @@ Returns all parents of the node
 
 > *Example*
 ```
-getParents(5)
+NestedSet.getParents(5)
 ```
 
 
@@ -133,7 +133,7 @@ Returns nested nodes in a node
 
 > *Example*
 ```
-getChilds(1, 1)
+NestedSet.getChilds(1, 1)
 ```
 
 
@@ -143,7 +143,7 @@ Returns the entire branch that contains the node
 
 > *Example*
 ```
-getBranch(5)
+NestedSet.getBranch(5)
 ```
 
 
