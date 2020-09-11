@@ -30,11 +30,9 @@ console.log(NestedSet.debug())
 
 
 ## Methods
-### Work with data
 
-```
-setItem(id, data)
-```
+
+### setItem(id, data)
 Sets data for an item
 id - ID item
 data - Stored data
@@ -45,9 +43,8 @@ setItem(1, { title: "Root"})
 ```
 
 
-```
-removeItem(id)
-```
+
+### removeItem(id)
 Removes an item with its dependent nodes
 id - ID item
 
@@ -57,11 +54,7 @@ removeItem(1)
 ```
 
 
-### Work with structure
-
-```
-addRoot (item_id)
-```
+### addRoot(item_id)
 Initializes the Nested Sets structure. Adds a root node and sets an item for it
 item_id - item ID
 
@@ -71,9 +64,7 @@ addRoot (1)
 ```
 
 
-```
-addNode (target_node_id, item_id)
-```
+### addNode(target_node_id, item_id)
 Adds a new node to the specified parent node and sets an item for it
 target_node_id - parent node ID
 item_id - item ID
@@ -84,9 +75,7 @@ addNode (1, 1)
 ```
 
 
-```
-getNode (node_id, asCopy)
-```
+### getNode(node_id, asCopy)
 Gets a node by ID
 node_id - node ID
 asCopy - true (will return a copy of the object) / false or undefined (will return the object itself)
@@ -97,9 +86,7 @@ getNode (1)
 ```
 
 
-```
-removeNode (node_id)
-```
+### removeNode(node_id)
 Removes a node by its ID
 node_id - node ID
 
@@ -109,21 +96,18 @@ removeNode (1)
 ```
 
 
-```
-getNodes ()
-```
+
+### getNodes ()
 Returns all nodes (Structure property)
 
 
-```
-removeNodes ()
-```
+### removeNodes()
 Removes all nodes (items are not destroyed)
 
+
+
+### getParent(node_id)
 Returns the first parent for the node
-```
-getParent (node_id)
-```
 node_id - node ID
 
 > *Example*
@@ -131,10 +115,9 @@ node_id - node ID
 getParent (5)
 ```
 
+
+### getParents(node_id)
 Returns all parents of the node
-```
-getParents (node_id)
-```
 node_id - node ID
 
 > *Example*
@@ -143,9 +126,7 @@ getParents (5)
 ```
 
 
-```
-getChilds (node_id, depth)
-```
+### getChilds(node_id, depth)
 Returns nested nodes in a node
 node_id - node ID
 depth - nesting depth
@@ -156,9 +137,7 @@ getChilds (1, 1)
 ```
 
 
-```
-getBranch (node_id)
-```
+### getBranch(node_id)
 Returns the entire branch that contains the node
 node_id - node ID
 
@@ -168,40 +147,28 @@ getBranch (5)
 ```
 
 
-```
-getTree ()
-```
+### getTree()
 Returns the entire structure (nodes and items)
 
 
-```
-clearAll ()
-```
+### clearAll()
 Removes all items and all nodes
 
 
-```
-isRoot (node_id)
-```
+### isRoot(node_id)
 Checks if a node is root
 node_id - node ID
 
 
-```
-isBranch (node_id)
-```
+### isBranch(node_id)
 Checks if a node is a parent
 node_id - node ID
 
 
-```
-isLeaf (node_id)
-```
+### isLeaf(node_id)
 Checks if a node is the end of a branch
 node_id - node ID
 
 
-```
-debug ()
-```
+### debug()
 Displays information about nodes and points in the console
