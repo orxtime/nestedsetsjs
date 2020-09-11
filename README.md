@@ -23,8 +23,8 @@ console.log(NestedSet.debug())
 ```
 
 ## Properties
-Structure
-Data
+- Structure (Nodes)
+- Data (Items)
 
 ## Methods
 ### Work with data
