@@ -1,5 +1,5 @@
 # nestedsetsjs
- Nested sets structure with separated items and nodes
+ Nested sets structure with separated items and nodes.
 
  Source here [Armasheko Artem / nestedsetsjs](https://github.com/orxtime/nestedsetsjs).
 
@@ -80,7 +80,7 @@ NestedSet.addNode(1, 1)
 ### getNode(node_id, asCopy)
 Gets a node by ID
 - node_id - node ID
-- asCopy - true (will return a copy of the object) / false or undefined (will return the object itself)
+- asCopy - **true** (will return a copy of the object) / **false** or **undefined** (will return the object itself)
 
 ```
 NestedSet.getNode(1)
@@ -167,7 +167,7 @@ Checks if a node is the end of a branch
 
 
 ### debug()
-Displays information about nodes and points in the console
+Displays information about nodes and items
 
 
 ## Properties
