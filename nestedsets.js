@@ -1,4 +1,4 @@
-exports.NestedSetsJS = function() {
+module.exports = (function() {
   var _nestedsets = {}
     _nestedsets.Structure = []
     _nestedsets.Data = {}
@@ -302,4 +302,4 @@ exports.NestedSetsJS = function() {
     }
 
   return _nestedsets
-}
+})
