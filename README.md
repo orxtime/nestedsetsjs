@@ -3,7 +3,18 @@
 
 :evergreen_tree:
 
+## Instalation
+
 ```
+npm install nestedsetsjs
+```
+
+## Usage
+
+```
+var ns 		 			   = require('nestedsetsjs')
+var NestedSet 		= ns();
+
 NestedSet.setItem(1, {title: "Root"})
 NestedSet.setItem(2, {title: "Type"})
 NestedSet.setItem(3, {title: "Type2"})
@@ -20,12 +31,6 @@ var subgroup_node_id = NestedSet.addNode(group_node_id, 6)
 var subgroup_node_id2 = NestedSet.addNode(group_node2_id, 6)
 
 console.log(NestedSet.debug())
-```
-
-## Instalation
-
-```
-npm install nestedsetsjs
 ```
 
 ## Properties
