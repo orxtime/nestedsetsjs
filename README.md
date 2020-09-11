@@ -60,7 +60,7 @@ Initializes the Nested Sets structure. Adds a root node and sets an item for it
 
 > *Example*
 ```
-addRoot (1)
+addRoot(1)
 ```
 
 
@@ -71,7 +71,7 @@ Adds a new node to the specified parent node and sets an item for it
 
 > *Example*
 ```
-addNode (1, 1)
+addNode(1, 1)
 ```
 
 
@@ -82,7 +82,7 @@ Gets a node by ID
 
 > *Example*
 ```
-getNode (1)
+getNode(1)
 ```
 
 
@@ -92,7 +92,7 @@ Removes a node by its ID
 
 > *Example*
 ```
-removeNode (1)
+removeNode(1)
 ```
 
 
@@ -112,7 +112,7 @@ Returns the first parent for the node
 
 > *Example*
 ```
-getParent (5)
+getParent(5)
 ```
 
 
@@ -122,7 +122,7 @@ Returns all parents of the node
 
 > *Example*
 ```
-getParents (5)
+getParents(5)
 ```
 
 
@@ -133,7 +133,7 @@ Returns nested nodes in a node
 
 > *Example*
 ```
-getChilds (1, 1)
+getChilds(1, 1)
 ```
 
 
@@ -143,7 +143,7 @@ Returns the entire branch that contains the node
 
 > *Example*
 ```
-getBranch (5)
+getBranch(5)
 ```
 
 
