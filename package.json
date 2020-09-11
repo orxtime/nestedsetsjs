@@ -1,0 +1,27 @@
+{
+  "name": "nestedsetsjs",
+  "version": "0.1.0",
+  "description": "Nested sets structure with separated items and nodes",
+  "main": "nestedsets.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "Artem Armashenko",
+    "email": "artem@armashenko.ru"
+  },
+  "contributors": [
+    {
+      "name": "Artem Armashenko",
+      "email": "artem@armashenko.ru"
+    }
+  ],
+  "keywords": [
+    "nestedsets",
+    "nested",
+    "sets",
+    "tree",
+    "path"
+  ],
+  "license": "ISC"
+}
