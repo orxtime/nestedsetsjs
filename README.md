@@ -1,6 +1,8 @@
 # nestedsetsjs
  Nested sets structure with separated items and nodes
 
+ Source here [Armasheko Artem / nestedsetsjs](https://github.com/orxtime/nestedsetsjs).
+
 :evergreen_tree:
 
 ## Instalation
@@ -12,8 +14,8 @@ npm install nestedsetsjs
 ## Usage
 
 ```
-var ns 		 			   = require('nestedsetsjs')
-var NestedSet 		= ns();
+var ns        = require('nestedsetsjs')
+var NestedSet = ns();
 
 NestedSet.setItem(1, {title: "Root"})
 NestedSet.setItem(2, {title: "Type"})
@@ -47,7 +49,6 @@ Sets data for an item
 - id - ID item
 - data - Stored data
 
-> *Example*
 ```
 NestedSet.setItem(1, { title: "Root"})
 ```
@@ -58,7 +59,6 @@ NestedSet.setItem(1, { title: "Root"})
 Removes an item with its dependent nodes
 - id - ID item
 
-> *Example*
 ```
 NestedSet.removeItem(1)
 ```
@@ -68,7 +68,6 @@ NestedSet.removeItem(1)
 Initializes the Nested Sets structure. Adds a root node and sets an item for it
 - item_id - item ID
 
-> *Example*
 ```
 NestedSet.addRoot(1)
 ```
@@ -79,7 +78,6 @@ Adds a new node to the specified parent node and sets an item for it
 - target_node_id - parent node ID
 - item_id - item ID
 
-> *Example*
 ```
 NestedSet.addNode(1, 1)
 ```
@@ -90,7 +88,6 @@ Gets a node by ID
 - node_id - node ID
 - asCopy - true (will return a copy of the object) / false or undefined (will return the object itself)
 
-> *Example*
 ```
 NestedSet.getNode(1)
 ```
@@ -100,7 +97,6 @@ NestedSet.getNode(1)
 Removes a node by its ID
 - node_id - node ID
 
-> *Example*
 ```
 NestedSet.removeNode(1)
 ```
@@ -120,7 +116,6 @@ Removes all nodes (items are not destroyed)
 Returns the first parent for the node
 - node_id - node ID
 
-> *Example*
 ```
 NestedSet.getParent(5)
 ```
@@ -130,7 +125,6 @@ NestedSet.getParent(5)
 Returns all parents of the node
 - node_id - node ID
 
-> *Example*
 ```
 NestedSet.getParents(5)
 ```
@@ -141,7 +135,6 @@ Returns nested nodes in a node
 - node_id - node ID
 - depth - nesting depth
 
-> *Example*
 ```
 NestedSet.getChilds(1, 1)
 ```
@@ -151,7 +144,6 @@ NestedSet.getChilds(1, 1)
 Returns the entire branch that contains the node
 - node_id - node ID
 
-> *Example*
 ```
 NestedSet.getBranch(5)
 ```
