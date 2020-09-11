@@ -22,6 +22,11 @@ var subgroup_node_id2 = NestedSet.addNode(group_node2_id, 6)
 console.log(NestedSet.debug())
 ```
 
+## Instalation
+
+```
+npm install nestedsetsjs
+```
 
 ## Properties
 - Structure (Nodes)
