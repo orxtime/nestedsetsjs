@@ -209,5 +209,13 @@ Displays information about nodes and items
 
 ## Tests
 ```
+npm install
 npm test
+```
+
+## ESLint
+```
+npm install
+npx eslint nestedsets.js
+npx eslint test/test.js
 ```
