@@ -1,5 +1,5 @@
 var assert = require('assert')
-var ns     = require('../nestedsets.js')
+var ns = require('../nestedsets.js')
 
 describe('Properties', function () {
   it('Data exists', function () {
@@ -25,7 +25,7 @@ describe('addRoot', function () {
     var NestedSet = ns()
     NestedSet.setItem(1, 10000)
     NestedSet.addRoot(1, 1)
-    assert.equal(NestedSet.Structure[0].item_id, 1)
+    assert.equal(NestedSet.Structure[0].itemId, 1)
   })
 })
 
@@ -35,10 +35,10 @@ describe('addNode', function () {
     NestedSet.setItem(1, 10000)
     NestedSet.setItem(2, 20000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    NestedSet.addNode(root_node_id, 2)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    NestedSet.addNode(rootNodeId, 2)
 
-    assert.equal(NestedSet.Structure[1].item_id, 2)
+    assert.equal(NestedSet.Structure[1].itemId, 2)
   })
 })
 
@@ -49,12 +49,12 @@ describe('checkTree', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    NestedSet.addNode(parentNodeId, 3)
 
     var errors = NestedSet.checkTree()
-    
+
     assert.equal(errors.length === 0, true)
   })
 
@@ -64,14 +64,14 @@ describe('checkTree', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    NestedSet.addNode(parentNodeId, 3)
 
     NestedSet.Structure[1].lkey = 30
 
     var errors = NestedSet.checkTree()
-    
+
     assert.equal(errors.length !== 0, true)
   })
 })
@@ -83,14 +83,14 @@ describe('removeItem', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    NestedSet.addNode(parentNodeId, 3)
 
     NestedSet.removeItem(2)
 
     var errors = NestedSet.checkTree()
-    
+
     assert.equal(NestedSet.Structure[1] === undefined && NestedSet.Structure[2] === undefined && NestedSet.Data[2] === undefined && errors.length === 0, true)
   })
 })
@@ -101,12 +101,12 @@ describe('getNode', function () {
     NestedSet.setItem(1, 10000)
     NestedSet.setItem(2, 20000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
 
-    var node = NestedSet.getNode(parent_node_id)
-    
-    assert.equal(node.item_id == 2, true)
+    var node = NestedSet.getNode(parentNodeId)
+
+    assert.equal(node.itemId === 2, true)
   })
 })
 
@@ -117,14 +117,14 @@ describe('removeNode', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    NestedSet.addNode(parentNodeId, 3)
 
-    NestedSet.removeNode(parent_node_id)
+    NestedSet.removeNode(parentNodeId)
 
     var errors = NestedSet.checkTree()
-    
+
     assert.equal(NestedSet.Structure[1] === undefined && NestedSet.Structure[2] === undefined && errors.length === 0, true)
   })
 })
@@ -138,18 +138,18 @@ describe('moveNode', function () {
     NestedSet.setItem(4, 40000)
     NestedSet.setItem(5, 50000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
-    var parent_node2_id = NestedSet.addNode(root_node_id, 4)
-    var child_node2_id = NestedSet.addNode(parent_node2_id, 5)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    NestedSet.addNode(parentNodeId, 3)
+    var parentNode2Id = NestedSet.addNode(rootNodeId, 4)
+    var childNode2Id = NestedSet.addNode(parentNode2Id, 5)
 
-    NestedSet.moveNode(parent_node_id, child_node2_id)
-    var parent = NestedSet.getParent(parent_node_id)
+    NestedSet.moveNode(parentNodeId, childNode2Id)
+    var parent = NestedSet.getParent(parentNodeId)
 
     var errors = NestedSet.checkTree()
-    
-    assert.equal(parent._id === child_node2_id && errors.length === 0, true)
+
+    assert.equal(parent._id === childNode2Id && errors.length === 0, true)
   })
   it('Move a node down the tree', function () {
     var NestedSet = ns()
@@ -159,18 +159,18 @@ describe('moveNode', function () {
     NestedSet.setItem(4, 40000)
     NestedSet.setItem(5, 50000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
-    var parent_node2_id = NestedSet.addNode(root_node_id, 4)
-    var child_node2_id = NestedSet.addNode(parent_node2_id, 5)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    var childNodeId = NestedSet.addNode(parentNodeId, 3)
+    var parentNode2Id = NestedSet.addNode(rootNodeId, 4)
+    NestedSet.addNode(parentNode2Id, 5)
 
-    NestedSet.moveNode(parent_node2_id, child_node_id)
-    var parent = NestedSet.getParent(parent_node2_id)
+    NestedSet.moveNode(parentNode2Id, childNodeId)
+    var parent = NestedSet.getParent(parentNode2Id)
 
     var errors = NestedSet.checkTree()
-    
-    assert.equal(parent._id === child_node_id && errors.length === 0, true)
+
+    assert.equal(parent._id === childNodeId && errors.length === 0, true)
   })
   it('Move a node within the same branch', function () {
     var NestedSet = ns()
@@ -180,18 +180,18 @@ describe('moveNode', function () {
     NestedSet.setItem(4, 40000)
     NestedSet.setItem(5, 50000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var parent_node2_id = NestedSet.addNode(parent_node_id, 3)
-    var parent_node3_id = NestedSet.addNode(parent_node2_id, 4)
-    var parent_node4_id = NestedSet.addNode(parent_node3_id, 5)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    var parentNode2Id = NestedSet.addNode(parentNodeId, 3)
+    var parentNode3Id = NestedSet.addNode(parentNode2Id, 4)
+    var parentNode4Id = NestedSet.addNode(parentNode3Id, 5)
 
-    NestedSet.moveNode(parent_node4_id, parent_node2_id)
-    var parent = NestedSet.getParent(parent_node4_id)
+    NestedSet.moveNode(parentNode4Id, parentNode2Id)
+    var parent = NestedSet.getParent(parentNode4Id)
 
     var errors = NestedSet.checkTree()
-    
-    assert.equal(parent._id === parent_node2_id && errors.length === 0, true)
+
+    assert.equal(parent._id === parentNode2Id && errors.length === 0, true)
   })
 })
 
@@ -202,13 +202,13 @@ describe('getNodes', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    NestedSet.addNode(parentNodeId, 3)
 
     var nodes = NestedSet.getNodes()
-    
-    assert.equal(nodes[0].item_id === 1 && nodes[1].item_id === 2 && nodes[2].item_id === 3, true)
+
+    assert.equal(nodes[0].itemId === 1 && nodes[1].itemId === 2 && nodes[2].itemId === 3, true)
   })
 })
 
@@ -219,12 +219,12 @@ describe('removeNodes', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    NestedSet.addNode(parentNodeId, 3)
 
     NestedSet.removeNodes()
-    
+
     assert.equal(NestedSet.Structure.length, 0)
   })
 })
@@ -236,13 +236,13 @@ describe('getParent', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    var childNodeId = NestedSet.addNode(parentNodeId, 3)
 
-    var parent_node = NestedSet.getParent(child_node_id)
-    
-    assert.equal(parent_node._id, parent_node_id)
+    var parentNode = NestedSet.getParent(childNodeId)
+
+    assert.equal(parentNode._id, parentNodeId)
   })
 })
 
@@ -253,13 +253,13 @@ describe('getParents', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    var childNodeId = NestedSet.addNode(parentNodeId, 3)
 
-    var parents = NestedSet.getParents(child_node_id)
-    
-    assert.equal(parents[0]._id === root_node_id && parents[1]._id === parent_node_id && parents.length === 2, true)
+    var parents = NestedSet.getParents(childNodeId)
+
+    assert.equal(parents[0]._id === rootNodeId && parents[1]._id === parentNodeId && parents.length === 2, true)
   })
 })
 
@@ -270,13 +270,13 @@ describe('getChilds', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    var childNodeId = NestedSet.addNode(parentNodeId, 3)
 
-    var childs = NestedSet.getChilds(root_node_id)
-    
-    assert.equal(childs[0]._id === parent_node_id && childs[1]._id === child_node_id && childs.length === 2, true)
+    var childs = NestedSet.getChilds(rootNodeId)
+
+    assert.equal(childs[0]._id === parentNodeId && childs[1]._id === childNodeId && childs.length === 2, true)
   })
 })
 
@@ -287,13 +287,13 @@ describe('getBranch', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    var childNodeId = NestedSet.addNode(parentNodeId, 3)
 
-    var branch = NestedSet.getBranch(parent_node_id)
-    
-    assert.equal(branch[0]._id === root_node_id && branch[1]._id === parent_node_id && branch[2]._id === child_node_id && branch.length === 3, true)
+    var branch = NestedSet.getBranch(parentNodeId)
+
+    assert.equal(branch[0]._id === rootNodeId && branch[1]._id === parentNodeId && branch[2]._id === childNodeId && branch.length === 3, true)
   })
 })
 
@@ -304,16 +304,16 @@ describe('getTree', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    var childNodeId = NestedSet.addNode(parentNodeId, 3)
 
     var tree = NestedSet.getTree()
-    
+
     assert.equal(
-      tree[0]._id === root_node_id &&
-      tree[1]._id === parent_node_id &&
-      tree[2]._id === child_node_id &&
+      tree[0]._id === rootNodeId &&
+      tree[1]._id === parentNodeId &&
+      tree[2]._id === childNodeId &&
       tree.length === 3 &&
       tree[0].data === 10000 &&
       tree[1].data === 20000 &&
@@ -330,12 +330,12 @@ describe('clearAll', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    NestedSet.addNode(parentNodeId, 3)
 
     NestedSet.clearAll()
-    
+
     assert.equal(NestedSet.Structure.length === 0 && Object.keys(NestedSet.Data).length === 0, true)
   })
 })
@@ -347,11 +347,11 @@ describe('isRoot', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
-    
-    assert.equal(NestedSet.isRoot(root_node_id) && !NestedSet.isRoot(parent_node_id) && !NestedSet.isRoot(child_node_id), true)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    var childNodeId = NestedSet.addNode(parentNodeId, 3)
+
+    assert.equal(NestedSet.isRoot(rootNodeId) && !NestedSet.isRoot(parentNodeId) && !NestedSet.isRoot(childNodeId), true)
   })
 })
 
@@ -362,11 +362,11 @@ describe('isBranch', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
-    
-    assert.equal(NestedSet.isBranch(root_node_id) && NestedSet.isBranch(parent_node_id) && !NestedSet.isBranch(child_node_id), true)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    var childNodeId = NestedSet.addNode(parentNodeId, 3)
+
+    assert.equal(NestedSet.isBranch(rootNodeId) && NestedSet.isBranch(parentNodeId) && !NestedSet.isBranch(childNodeId), true)
   })
 })
 
@@ -377,11 +377,11 @@ describe('isLeaf', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
-    
-    assert.equal(!NestedSet.isLeaf(root_node_id) && !NestedSet.isLeaf(parent_node_id) && NestedSet.isLeaf(child_node_id), true)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    var childNodeId = NestedSet.addNode(parentNodeId, 3)
+
+    assert.equal(!NestedSet.isLeaf(rootNodeId) && !NestedSet.isLeaf(parentNodeId) && NestedSet.isLeaf(childNodeId), true)
   })
 })
 
@@ -392,12 +392,12 @@ describe('debug', function () {
     NestedSet.setItem(2, 20000)
     NestedSet.setItem(3, 30000)
 
-    var root_node_id = NestedSet.addRoot(1, 1)
-    var parent_node_id = NestedSet.addNode(root_node_id, 2)
-    var child_node_id = NestedSet.addNode(parent_node_id, 3)
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    NestedSet.addNode(parentNodeId, 3)
 
     var debug = NestedSet.debug()
-    
+
     assert.equal(debug.length === 3, true)
   })
 })
