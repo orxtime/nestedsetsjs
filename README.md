@@ -206,3 +206,8 @@ Displays information about nodes and items
   ...
 ]
 ```
+
+## Tests
+```
+npm test
+```
