@@ -33,7 +33,7 @@ module.exports = (function() {
           _id : 1,
           lkey : 1,
           rkey : 2,
-          depth : 0,
+          depth : 1,
           childs : 0,
           parent_id : 0,
           item_id : item_id
@@ -124,6 +124,82 @@ module.exports = (function() {
       })
     }
 
+    _nestedsets.moveNode = function(node_id, target_node_id) {
+      var nstd = this
+
+      var moved_node = nstd.getNode(node_id, true)
+      var target_node = nstd.getNode(target_node_id, true)
+      var parent_node = Object.assign({}, nstd.getParent(node_id))
+
+      var level = moved_node.depth
+      var right_key = moved_node.rkey
+      var left_key = moved_node.lkey
+
+      var level_up = target_node.depth
+      var right_key_near = target_node.rkey - 1
+
+      var skew_level = level_up - level + 1
+      var skew_tree = right_key - left_key + 1
+
+      var id_edit = nstd.Structure.filter(n => {
+        return n.lkey >= left_key && n.rkey <= right_key
+      }).map(n => n._id)
+
+      if (right_key_near > right_key) {
+        var skew_edit = right_key_near - left_key + 1 - skew_tree
+        nstd.Structure = nstd.Structure.map(n => {
+
+          if (n.lkey <= right_key_near && n.rkey > left_key) {
+            if (n.rkey <= right_key) {
+              n.lkey = n.lkey + skew_edit
+            } else {
+              if (n.lkey > right_key) {
+                n.lkey = n.lkey - skew_tree
+              }
+            }
+            if (n.rkey <= right_key) {
+              n.depth = n.depth + skew_level
+            }
+            if (n.rkey <= right_key) {
+              n.rkey = n.rkey + skew_edit
+            } else {
+              if (n.rkey <= right_key_near) {
+                n.rkey = n.rkey - skew_tree
+              }
+            }
+          }
+
+          return n
+        })
+      } else {
+        var skew_edit = right_key_near - left_key + 1
+        nstd.Structure = nstd.Structure.map(n => {
+
+          if (n.rkey > right_key_near && n.lkey < right_key) {
+            if (n.lkey >= left_key) {
+              n.rkey = n.rkey + skew_edit
+            } else {
+              if (n.rkey < left_key) {
+                n.rkey = n.rkey + skew_tree
+              }
+            }
+            if (n.lkey >= left_key) {
+              n.depth = n.depth + skew_level
+            }
+            if (n.lkey >= left_key) {
+              n.lkey = n.lkey + skew_edit
+            } else {
+              if (n.lkey > right_key_near) {
+                n.lkey = n.lkey + skew_tree
+              }
+            }
+          }
+
+          return n
+        })
+      }
+    }
+
     _nestedsets.getNodes = function() {
       var nstd = this
       return nstd.Structure.sort((a,b) => {
@@ -143,7 +219,7 @@ module.exports = (function() {
 
       var parents = nstd.getParents(node_id)
 
-      return (parents[parents.length - 2] === undefined ? false : parents[parents.length - 2])
+      return (parents[parents.length - 1] === undefined ? false : parents[parents.length - 1])
     }
 
     _nestedsets.getParents = function(node_id) {
@@ -156,7 +232,7 @@ module.exports = (function() {
       }
 
       var parents = nstd.getNodes().filter(n => {
-        return n.lkey <= parent_node.lkey && n.rkey >= parent_node.rkey
+        return n.lkey < parent_node.lkey && n.rkey > parent_node.rkey
       })
 
       if (parents.length > 0) {
@@ -290,13 +366,66 @@ module.exports = (function() {
       return selected_node.childs == 0
     }
 
+    _nestedsets.getMaxRightKey = function () {
+      var maxRKey = Math.max.apply(Math, nstd.Structure.map(function(o) { return o.rkey; }))
+      return maxRKey
+    }
+
+    _nestedsets.getMaxLeftKey = function () {
+      var maxLKey = Math.max.apply(Math, nstd.Structure.map(function(o) { return o.lkey; }))
+      return maxLKey
+    }
+
+    _nestedsets.getCountNodes = function () {
+      var countNodes = nstd.Structure.length
+      return countNodes
+    }
+
+    _nestedsets.checkTree = function() {
+      var nstd = this
+
+      var ruleLeftLessRight = nstd.Structure.filter(n => {
+        return n.lkey >= n.rkey
+      })
+
+      var ruleModKeys = nstd.Structure.filter(n => {
+        return ((n.rkey - n.lkey) % 2) === 0 
+      })
+
+      var ruleDepth = nstd.Structure.filter(n => {
+        return ((n.lkey - n.depth + 2) % 2) === 1
+      })
+
+      var errors = []
+
+      if (ruleLeftLessRight.length !== 0) {
+        errors.push({
+          LeftLessRight: ruleLeftLessRight
+        });
+      }
+
+      if (ruleModKeys.length !== 0) {
+        errors.push({
+          ModKeys: ruleModKeys
+        });
+      }
+
+      if (ruleDepth.length !== 0) {
+        errors.push({
+          Depth: ruleDepth
+        });
+      }
+
+      return errors
+    }
+
     _nestedsets.debug = function(tree) {
       var nstd = this
       var results = []
       tree = tree || nstd.getNodes()
       tree.map(n => {
         var s = ' '
-        results.push(s.repeat(n.depth + 1) + '> ' + nstd.Data[n.item_id].title + '(item_id:' + n.item_id + '; node_id:' + n._id + '; lkey:' + n.lkey + '; rkey:' + n.rkey + '; childs:' + n.childs + ')');
+        results.push(s.repeat(n.depth + 1) + '> ' + JSON.stringify(nstd.Data[n.item_id]) + '(item_id:' + n.item_id + '; node_id:' + n._id + '; lkey:' + n.lkey + '; rkey:' + n.rkey + '; depth:' + n.depth + '; childs:' + n.childs + ')');
       })
       return results
     }

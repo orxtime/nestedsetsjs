@@ -165,6 +165,22 @@ Checks if a node is a parent
 Checks if a node is the end of a branch
 - node_id - node ID
 
+### getMaxRightKey
+Returns MAX right key in the tree
+
+### getMaxLeftKey
+Returns MAX left key in the tree
+
+### getCountNodes
+Returns count nodes of tree
+
+
+### checkTree()
+Checks a tree according to three rules
+1) The left node key is always less than the right key
+2) The remainder of the division of the difference between the right and left keys must be 0
+3) The remainder of dividing the difference between the left key and the nesting depth + 2 must be 0
+
 
 ### debug()
 Displays information about nodes and items
