@@ -1,10 +1,11 @@
 {
   "name": "nestedsetsjs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Nested sets structure with separated items and nodes",
   "main": "nestedsets.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "minify": "minify ./src/nestedsets.js > nestedsets.js"
   },
   "author": {
     "name": "Artem Armashenko",
