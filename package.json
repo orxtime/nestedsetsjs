@@ -17,6 +17,14 @@
       "email": "artem@armashenko.ru"
     }
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orxtime/nestedsetsjs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/orxtime/nestedsetsjs/issues"
+  },
+  "homepage": "https://github.com/orxtime/nestedsetsjs#nestedsetsjs",
   "keywords": [
     "nested-set",
     "nestedsets",
@@ -25,9 +33,10 @@
     "tree",
     "path",
     "nodes",
-    "structure"
+    "structure",
+    "hierarhy"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "assert": "^2.0.0",
     "eslint": "^7.9.0",

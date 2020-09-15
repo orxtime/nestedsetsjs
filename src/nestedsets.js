@@ -34,7 +34,7 @@ module.exports = function () {
         rkey: 2,
         depth: 1,
         childs: 0,
-        parent_id: 0,
+        parentId: 0,
         itemId: itemId
       })
     }
@@ -69,7 +69,7 @@ module.exports = function () {
         rkey: parentNode.rkey + 1,
         depth: parentNode.depth + 1,
         childs: 0,
-        parent_id: parentNode._id,
+        parentId: parentNode._id,
         itemId: itemId
       }
 
@@ -333,7 +333,7 @@ module.exports = function () {
       return false
     }
 
-    return selectedNode.parent_id === 0
+    return selectedNode.parentId === 0
   }
 
   _nestedsets.isBranch = function (nodeId) {
