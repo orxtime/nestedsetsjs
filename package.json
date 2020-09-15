@@ -1,6 +1,6 @@
 {
   "name": "nestedsetsjs",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Nested sets structure with separated items and nodes",
   "main": "nestedsets.js",
   "scripts": {

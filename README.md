@@ -1,4 +1,10 @@
 # nestedsetsjs
+
+[![NPM Version](https://img.shields.io/npm/v/nestedsetsjs.svg?style=flat)](https://www.npmjs.com/package/nestedsetsjs)
+![GitHub file size in bytes](https://img.shields.io/github/size/orxtime/nestedsetsjs/nestedsets.js)
+![npm](https://img.shields.io/npm/dw/nestedsetsjs)
+![License](https://img.shields.io/github/license/orxtime/nestedsetsjs.svg)
+
  Nested sets structure with separated items and nodes.
 
  Source here [Armasheko Artem / nestedsetsjs](https://github.com/orxtime/nestedsetsjs).
