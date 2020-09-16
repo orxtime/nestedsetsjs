@@ -8,44 +8,46 @@ interface INestedSetNode {
   itemId: number;
 }
 
-interface INestedSet {
-  Structure: NestedSetNode[]
-  Data: Object[]
-  setItem: (itemId: number, itemData: Object) => Object;
-  removeItem: (itemId: number) => Boolean;
-  addRoot: (itemId: number) => Number;
-  addNode: (targetNodeId: number, itemId: number) => Number;
-  getNode: (nodeId: number, asCopy: boolean) => NestedSetNode;
-  removeNode: (nodeId: number) => Boolean;
-  moveNode: (nodeId: number, targetNodeId: number) => Boolean;
-  getNodes: () => NestedSetNode[];
-  removeNodes: () => Boolean;
-  getParent: (nodeId: number) => NestedSetNode;
-  getParents: (nodeId: number) => NestedSetNode[];
-  getChilds: (nodeId: number, depth: number) => NestedSetNode[];
-  getBranch: (nodeId: number) => NestedSetNode[];
-  getTree: () => NestedSetNode[];
-  clearAll: () => Boolean;
-  isRoot: (nodeId: number) => Boolean;
-  isBranch: (nodeId: number) => Boolean;
-  isLeaf: (nodeId: number) => Boolean;
-  getMaxRightKey: () => number;
-  getMaxLeftKey: () => number;
-  getCountNodes: () => number;
-  checkTree: () => NesteSetError[];
-  debug: () => string[];
+interface INestedSetItem {
+  id?: number;
 }
 
 interface INesteSetError {
-  LeftLessRight?: NestedSetNode[];
-  ModKeys?: NestedSetNode[];
-  Depth?: NestedSetNode[];
+  LeftLessRight?: INestedSetNode[];
+  ModKeys?: INestedSetNode[];
+  Depth?: INestedSetNode[];
 }
 
-class NesteSetError implements INesteSetError {
-  LeftLessRight?: NestedSetNode[] = [];
-  ModKeys?: NestedSetNode[] = [];
-  Depth?: NestedSetNode[] = [];
+interface INestedSet {
+  Structure: INestedSetNode[]
+  Data: INestedSetItem[]
+  setItem: (itemId: number, itemData: INestedSetItem) => INestedSetItem;
+  removeItem: (itemId: number) => boolean;
+  addRoot: (itemId: number) => number;
+  addNode: (targetNodeId: number, itemId: number) => number;
+  getNode: (nodeId: number, asCopy: boolean) => INestedSetNode;
+  removeNode: (nodeId: number) => boolean;
+  moveNode: (nodeId: number, targetNodeId: number) => boolean;
+  getNodes: () => INestedSetNode[];
+  removeNodes: () => boolean;
+  getParent: (nodeId: number) => INestedSetNode;
+  getParents: (nodeId: number) => INestedSetNode[];
+  getChilds: (nodeId: number, depth: number) => INestedSetNode[];
+  getBranch: (nodeId: number) => INestedSetNode[];
+  getTree: () => INestedSetNode[];
+  clearAll: () => boolean;
+  isRoot: (nodeId: number) => boolean;
+  isBranch: (nodeId: number) => boolean;
+  isLeaf: (nodeId: number) => boolean;
+  getMaxRightKey: () => number;
+  getMaxLeftKey: () => number;
+  getCountNodes: () => number;
+  checkTree: () => INesteSetError[];
+  debug: () => string[];
+}
+
+class NestedSetItem implements INestedSetItem {
+
 }
 
 class NestedSetNode implements INestedSetNode {
@@ -56,16 +58,16 @@ class NestedSetNode implements INestedSetNode {
   childs: number;
   parentId: number;
   itemId: number;
-  data?: Object;
+  data?: NestedSetItem;
 
-  constructor(_id: number, lkey: number, rkey: number, depth: number, childs: number, parentId: number, itemId: number) { 
-    this._id = _id;
-    this.lkey = lkey;
-    this.rkey = rkey;
-    this.depth = depth;
-    this.childs = childs;
-    this.parentId = parentId;
-    this.itemId = itemId;
+  constructor (_id: number, lkey: number, rkey: number, depth: number, childs: number, parentId: number, itemId: number) {
+    this._id = _id
+    this.lkey = lkey
+    this.rkey = rkey
+    this.depth = depth
+    this.childs = childs
+    this.parentId = parentId
+    this.itemId = itemId
   }
 }
 
@@ -77,38 +79,44 @@ class NestedSetRootNode implements INestedSetNode {
   childs: number;
   parentId: number;
   itemId: number;
-  data?: Object;
+  data?: NestedSetItem;
 
-  constructor(itemId: number) { 
-    this._id = 1;
-    this.lkey = 1;
-    this.rkey = 2;
-    this.depth = 1;
-    this.childs = 0;
-    this.parentId = 0;
-    this.itemId = itemId;
+  constructor (itemId: number) {
+    this._id = 1
+    this.lkey = 1
+    this.rkey = 2
+    this.depth = 1
+    this.childs = 0
+    this.parentId = 0
+    this.itemId = itemId
   }
+}
+
+class NesteSetError implements INesteSetError {
+  LeftLessRight?: NestedSetNode[] = [];
+  ModKeys?: NestedSetNode[] = [];
+  Depth?: NestedSetNode[] = [];
 }
 
 class NestedSet implements INestedSet {
   Structure: NestedSetNode[];
-  Data: Object[];
+  Data: NestedSetItem[];
 
-  constructor(Structure: NestedSetNode[], Data: Object[]) { 
-    this.Structure = Structure;
-    this.Data = Data;
+  constructor (Structure: NestedSetNode[], Data: NestedSetItem[]) {
+    this.Structure = Structure
+    this.Data = Data
   }
 
-  setItem (itemId: number, itemData: Object) {
-    return this.Data[itemId] = itemData
+  setItem (itemId: number, itemData: NestedSetItem) {
+    this.Data[itemId] = itemData
+    return this.Data[itemId]
   }
 
   removeItem (itemId: number) {
-    let nstd = this
-    if (nstd.Data[itemId] !== undefined) {
+    if (this.Data[itemId] !== undefined) {
       for (let i = 0; i < this.Structure.length; i++) {
         if (this.Structure[i].itemId === itemId) {
-          let childs = this.getChilds(this.Structure[i]._id, Infinity)
+          const childs = this.getChilds(this.Structure[i]._id, Infinity)
           for (let j = 0; j < childs.length; j++) {
             this.removeNode(childs[j]._id)
           }
@@ -118,31 +126,30 @@ class NestedSet implements INestedSet {
       delete this.Data[itemId]
       return true
     } else {
-      return false  
+      return false
     }
   }
 
   addRoot (itemId: number) {
     if (this.Data[itemId] !== undefined) {
       this.removeNodes()
-      let newNode: NestedSetRootNode = new NestedSetRootNode(itemId);
+      const newNode: NestedSetRootNode = new NestedSetRootNode(itemId)
       this.Structure.push(newNode)
     }
     return this.Structure[0]._id
   }
 
   addNode (targetNodeId: number, itemId: number) {
-    let nstd = this
-    if (nstd.Data[itemId] !== undefined) {
-      let parentNode: NestedSetNode = nstd.getNode(targetNodeId, true)
+    if (this.Data[itemId] !== undefined) {
+      let parentNode: NestedSetNode = this.getNode(targetNodeId, true)
 
       if (parentNode._id === 0) {
         return 0
       }
 
-      let maxId = Math.max.apply(Math, nstd.Structure.map(function (o) { return o._id })) || 0
+      const maxId = Math.max(...this.Structure.map(o => o._id)) || 0
 
-      nstd.Structure = nstd.Structure.map(n => {
+      this.Structure = this.Structure.map(n => {
         if (n.lkey > parentNode.rkey) {
           n.lkey += 2
           n.rkey += 2
@@ -153,26 +160,25 @@ class NestedSet implements INestedSet {
         return n
       })
 
-      let node: INestedSetNode = new NestedSetNode(maxId + 1, parentNode.rkey, parentNode.rkey + 1, parentNode.depth + 1, 0, parentNode._id, itemId)
+      const node: INestedSetNode = new NestedSetNode(maxId + 1, parentNode.rkey, parentNode.rkey + 1, parentNode.depth + 1, 0, parentNode._id, itemId)
 
-      parentNode = nstd.getNode(targetNodeId, false)
+      parentNode = this.getNode(targetNodeId, false)
       parentNode.childs++
 
-      nstd.Structure.push(node)
+      this.Structure.push(node)
 
       return maxId + 1
-    } else{
+    } else {
       return 0
     }
   }
 
   getNode (nodeId: number, asCopy: boolean) {
-    let nstd = this
-
-    let selectedNode: NestedSetNode[] = nstd.Structure.filter(n => n._id === nodeId)
+    const selectedNode: NestedSetNode[] = this.Structure.filter(n => n._id === nodeId)
     if (Array.isArray(selectedNode) && selectedNode.length === 1) {
       if (asCopy) {
-        return (<any>Object).assign({}, selectedNode[0])
+        const emptyNode = new NestedSetNode(0, 0, 0, 0, 0, 0, 0)
+        return { ...emptyNode, ...selectedNode[0] }
       } else {
         return selectedNode[0]
       }
@@ -182,8 +188,8 @@ class NestedSet implements INestedSet {
   }
 
   removeNode (nodeId: number) {
-    let selectedNode: NestedSetNode = this.getNode(nodeId, true)
-    let parentNode: NestedSetNode = this.getParent(nodeId)
+    const selectedNode: NestedSetNode = this.getNode(nodeId, true)
+    const parentNode: NestedSetNode = this.getParent(nodeId)
 
     if (selectedNode._id === 0) {
       return false
@@ -206,26 +212,24 @@ class NestedSet implements INestedSet {
   }
 
   moveNode (nodeId: number, targetNodeId: number) {
-    let nstd = this
+    const movedNode: NestedSetNode = this.getNode(nodeId, true)
+    const targetNode: NestedSetNode = this.getNode(targetNodeId, true)
 
-    let movedNode: NestedSetNode = nstd.getNode(nodeId, true)
-    let targetNode: NestedSetNode = nstd.getNode(targetNodeId, true)
+    const level: number = movedNode.depth
+    const rightKey: number = movedNode.rkey
+    const leftKey: number = movedNode.lkey
 
-    let level: number = movedNode.depth
-    let rightKey: number = movedNode.rkey
-    let leftKey: number = movedNode.lkey
+    const levelUp: number = targetNode.depth
+    const rightKeyNear: number = targetNode.rkey - 1
 
-    let levelUp: number = targetNode.depth
-    let rightKeyNear: number = targetNode.rkey - 1
+    const skewLevel: number = levelUp - level + 1
+    const skewTree: number = rightKey - leftKey + 1
 
-    let skewLevel: number = levelUp - level + 1
-    let skewTree: number = rightKey - leftKey + 1
-
-    let skewEdit: number = 0;
+    let skewEdit = 0
 
     if (rightKeyNear > rightKey) {
       skewEdit = rightKeyNear - leftKey + 1 - skewTree
-      nstd.Structure = nstd.Structure.map(n => {
+      this.Structure = this.Structure.map(n => {
         if (n.lkey <= rightKeyNear && n.rkey > leftKey) {
           if (n.rkey <= rightKey) {
             n.lkey = n.lkey + skewEdit
@@ -250,7 +254,7 @@ class NestedSet implements INestedSet {
       })
     } else {
       skewEdit = rightKeyNear - leftKey + 1
-      nstd.Structure = nstd.Structure.map(n => {
+      this.Structure = this.Structure.map(n => {
         if (n.rkey > rightKeyNear && n.lkey < rightKey) {
           if (n.lkey >= leftKey) {
             n.rkey = n.rkey + skewEdit
@@ -288,31 +292,29 @@ class NestedSet implements INestedSet {
   }
 
   getParent (nodeId: number) {
-    let parents = this.getParents(nodeId)
+    const parents = this.getParents(nodeId)
     return (parents[parents.length - 1] === undefined ? new NestedSetNode(0, 0, 0, 0, 0, 0, 0) : parents[parents.length - 1])
   }
 
   getParents (nodeId: number) {
-    let nstd = this
-
-    let parentNode = nstd.getNode(nodeId, false)
+    const parentNode = this.getNode(nodeId, false)
 
     if (parentNode._id === 0) {
       return []
     }
 
-    let parents = nstd.getNodes().filter(n => {
+    let parents = this.getNodes().filter(n => {
       return n.lkey < parentNode.lkey && n.rkey > parentNode.rkey
     })
 
     if (parents.length > 0) {
-      let results: NestedSetNode[] = []
+      const results: NestedSetNode[] = []
       parents.sort((a, b) => {
         if (a.lkey > b.lkey) return 1
         if (a.lkey < b.lkey) return -1
         return 0
       }).map(n => {
-        n.data = nstd.Data[n.itemId]
+        n.data = this.Data[n.itemId]
         results.push(n)
       })
       parents = results
@@ -322,25 +324,24 @@ class NestedSet implements INestedSet {
   }
 
   getChilds (nodeId: number, depth: number) {
-    let nstd = this
-    let parentNode = nstd.getNode(nodeId, false)
+    const parentNode = this.getNode(nodeId, false)
 
     if (parentNode._id === 0) {
       return []
     }
 
-    let childs = nstd.getNodes().filter(n => {
+    let childs = this.getNodes().filter(n => {
       return n.lkey >= parentNode.lkey && n.rkey <= parentNode.rkey && nodeId !== n._id && (depth === undefined ? true : n.depth <= (parentNode.depth + depth))
     })
 
     if (childs.length > 0) {
-      let results: NestedSetNode[] = []
+      const results: NestedSetNode[] = []
       childs.sort((a, b) => {
         if (a.lkey > b.lkey) return 1
         if (a.lkey < b.lkey) return -1
         return 0
       }).map(n => {
-        n.data = nstd.Data[n.itemId]
+        n.data = this.Data[n.itemId]
         results.push(n)
       })
       childs = results
@@ -350,26 +351,24 @@ class NestedSet implements INestedSet {
   }
 
   getBranch (nodeId: number) {
-    let nstd = this
-
-    let parentNode = nstd.getNode(nodeId, false)
+    const parentNode = this.getNode(nodeId, false)
 
     if (parentNode._id === 0) {
       return []
     }
 
-    let branch = nstd.getNodes().filter(n => {
+    let branch = this.getNodes().filter(n => {
       return n.rkey > parentNode.lkey && n.lkey < parentNode.rkey
     })
 
     if (branch.length > 0) {
-      let results: NestedSetNode[] = []
+      const results: NestedSetNode[] = []
       branch.sort((a, b) => {
         if (a.lkey > b.lkey) return 1
         if (a.lkey < b.lkey) return -1
         return 0
       }).map(n => {
-        n.data = nstd.Data[n.itemId]
+        n.data = this.Data[n.itemId]
         results.push(n)
       })
       branch = results
@@ -379,14 +378,13 @@ class NestedSet implements INestedSet {
   }
 
   getTree () {
-    let nstd = this
-    let results: NestedSetNode[] = []
-    nstd.getNodes().sort((a, b) => {
+    const results: NestedSetNode[] = []
+    this.getNodes().sort((a, b) => {
       if (a.lkey > b.lkey) return 1
       if (a.lkey < b.lkey) return -1
       return 0
     }).map(n => {
-      n.data = nstd.Data[n.itemId]
+      n.data = this.Data[n.itemId]
       results.push(n)
     })
     return results
@@ -399,7 +397,7 @@ class NestedSet implements INestedSet {
   }
 
   isRoot (nodeId: number) {
-    let selectedNode = this.getNode(nodeId, false)
+    const selectedNode = this.getNode(nodeId, false)
     if (selectedNode._id === 0) {
       return false
     }
@@ -407,7 +405,7 @@ class NestedSet implements INestedSet {
   }
 
   isBranch (nodeId: number) {
-    let selectedNode = this.getNode(nodeId, false)
+    const selectedNode = this.getNode(nodeId, false)
     if (selectedNode._id === 0) {
       return false
     }
@@ -415,7 +413,7 @@ class NestedSet implements INestedSet {
   }
 
   isLeaf (nodeId: number) {
-    let selectedNode = this.getNode(nodeId, false)
+    const selectedNode = this.getNode(nodeId, false)
     if (selectedNode._id === 0) {
       return false
     }
@@ -423,14 +421,12 @@ class NestedSet implements INestedSet {
   }
 
   getMaxRightKey () {
-    let nstd = this
-    let maxRKey = Math.max.apply(Math, nstd.Structure.map(function (o) { return o.rkey }))
+    const maxRKey = Math.max(...this.Structure.map(o => o.rkey))
     return maxRKey
   }
 
   getMaxLeftKey () {
-    let nstd = this
-    let maxLKey = Math.max.apply(Math, nstd.Structure.map(function (o) { return o.lkey }))
+    const maxLKey = Math.max(...this.Structure.map(o => o.lkey))
     return maxLKey
   }
 
@@ -439,20 +435,19 @@ class NestedSet implements INestedSet {
   }
 
   checkTree () {
-    let nstd = this
-    let ruleLeftLessRight = nstd.Structure.filter(n => {
+    const ruleLeftLessRight = this.Structure.filter(n => {
       return n.lkey >= n.rkey
     })
 
-    let ruleModKeys = nstd.Structure.filter(n => {
+    const ruleModKeys = this.Structure.filter(n => {
       return ((n.rkey - n.lkey) % 2) === 0
     })
 
-    let ruleDepth = nstd.Structure.filter(n => {
+    const ruleDepth = this.Structure.filter(n => {
       return ((n.lkey - n.depth + 2) % 2) === 1
     })
 
-    let errors: NesteSetError[] = []
+    const errors: NesteSetError[] = []
 
     if (ruleLeftLessRight.length !== 0) {
       errors.push({
@@ -476,11 +471,10 @@ class NestedSet implements INestedSet {
   }
 
   debug () {
-    let nstd = this
-    let results: string[] = []
-    let tree = nstd.getNodes().map(n => {
-      let s = ' '
-      results.push(s.repeat(n.depth + 1) + '> ' + JSON.stringify(nstd.Data[n.itemId]) + '(itemId:' + n.itemId + '; nodeId:' + n._id + '; lkey:' + n.lkey + '; rkey:' + n.rkey + '; depth:' + n.depth + '; childs:' + n.childs + ')')
+    const results: string[] = []
+    this.getNodes().map(n => {
+      const s = ' '
+      results.push(s.repeat(n.depth + 1) + '> ' + JSON.stringify(this.Data[n.itemId]) + '(itemId:' + n.itemId + '; nodeId:' + n._id + '; lkey:' + n.lkey + '; rkey:' + n.rkey + '; depth:' + n.depth + '; childs:' + n.childs + ')')
     })
     return results
   }

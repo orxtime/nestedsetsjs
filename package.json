@@ -6,6 +6,8 @@
   "scripts": {
     "test": "mocha",
     "minify": "minify ./src/nestedsets.js > nestedsets.js",
+    "lint": "eslint . --ext .ts",
+    "lint-fix": "eslint . --ext .ts --fix",
     "compile": "npx tsc ./src/nestedsets.ts && minify ./src/nestedsets.js > nestedsets.js"
   },
   "author": {
@@ -40,6 +42,8 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^14.10.2",
+    "@typescript-eslint/eslint-plugin": "^4.1.1",
+    "@typescript-eslint/parser": "^4.1.1",
     "assert": "^2.0.0",
     "eslint": "^7.9.0",
     "eslint-config-standard": "^14.1.1",

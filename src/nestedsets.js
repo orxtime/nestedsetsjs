@@ -1,10 +1,18 @@
-var NesteSetError = /** @class */ (function () {
-    function NesteSetError() {
-        this.LeftLessRight = [];
-        this.ModKeys = [];
-        this.Depth = [];
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var NestedSetItem = /** @class */ (function () {
+    function NestedSetItem() {
     }
-    return NesteSetError;
+    return NestedSetItem;
 }());
 var NestedSetNode = /** @class */ (function () {
     function NestedSetNode(_id, lkey, rkey, depth, childs, parentId, itemId) {
@@ -30,17 +38,25 @@ var NestedSetRootNode = /** @class */ (function () {
     }
     return NestedSetRootNode;
 }());
+var NesteSetError = /** @class */ (function () {
+    function NesteSetError() {
+        this.LeftLessRight = [];
+        this.ModKeys = [];
+        this.Depth = [];
+    }
+    return NesteSetError;
+}());
 var NestedSet = /** @class */ (function () {
     function NestedSet(Structure, Data) {
         this.Structure = Structure;
         this.Data = Data;
     }
     NestedSet.prototype.setItem = function (itemId, itemData) {
-        return this.Data[itemId] = itemData;
+        this.Data[itemId] = itemData;
+        return this.Data[itemId];
     };
     NestedSet.prototype.removeItem = function (itemId) {
-        var nstd = this;
-        if (nstd.Data[itemId] !== undefined) {
+        if (this.Data[itemId] !== undefined) {
             for (var i = 0; i < this.Structure.length; i++) {
                 if (this.Structure[i].itemId === itemId) {
                     var childs = this.getChilds(this.Structure[i]._id, Infinity);
@@ -66,14 +82,13 @@ var NestedSet = /** @class */ (function () {
         return this.Structure[0]._id;
     };
     NestedSet.prototype.addNode = function (targetNodeId, itemId) {
-        var nstd = this;
-        if (nstd.Data[itemId] !== undefined) {
-            var parentNode_1 = nstd.getNode(targetNodeId, true);
+        if (this.Data[itemId] !== undefined) {
+            var parentNode_1 = this.getNode(targetNodeId, true);
             if (parentNode_1._id === 0) {
                 return 0;
             }
-            var maxId = Math.max.apply(Math, nstd.Structure.map(function (o) { return o._id; })) || 0;
-            nstd.Structure = nstd.Structure.map(function (n) {
+            var maxId = Math.max.apply(Math, this.Structure.map(function (o) { return o._id; })) || 0;
+            this.Structure = this.Structure.map(function (n) {
                 if (n.lkey > parentNode_1.rkey) {
                     n.lkey += 2;
                     n.rkey += 2;
@@ -84,9 +99,9 @@ var NestedSet = /** @class */ (function () {
                 return n;
             });
             var node = new NestedSetNode(maxId + 1, parentNode_1.rkey, parentNode_1.rkey + 1, parentNode_1.depth + 1, 0, parentNode_1._id, itemId);
-            parentNode_1 = nstd.getNode(targetNodeId, false);
+            parentNode_1 = this.getNode(targetNodeId, false);
             parentNode_1.childs++;
-            nstd.Structure.push(node);
+            this.Structure.push(node);
             return maxId + 1;
         }
         else {
@@ -94,11 +109,11 @@ var NestedSet = /** @class */ (function () {
         }
     };
     NestedSet.prototype.getNode = function (nodeId, asCopy) {
-        var nstd = this;
-        var selectedNode = nstd.Structure.filter(function (n) { return n._id === nodeId; });
+        var selectedNode = this.Structure.filter(function (n) { return n._id === nodeId; });
         if (Array.isArray(selectedNode) && selectedNode.length === 1) {
             if (asCopy) {
-                return Object.assign({}, selectedNode[0]);
+                var emptyNode = new NestedSetNode(0, 0, 0, 0, 0, 0, 0);
+                return __assign(__assign({}, emptyNode), selectedNode[0]);
             }
             else {
                 return selectedNode[0];
@@ -127,9 +142,8 @@ var NestedSet = /** @class */ (function () {
         return true;
     };
     NestedSet.prototype.moveNode = function (nodeId, targetNodeId) {
-        var nstd = this;
-        var movedNode = nstd.getNode(nodeId, true);
-        var targetNode = nstd.getNode(targetNodeId, true);
+        var movedNode = this.getNode(nodeId, true);
+        var targetNode = this.getNode(targetNodeId, true);
         var level = movedNode.depth;
         var rightKey = movedNode.rkey;
         var leftKey = movedNode.lkey;
@@ -140,7 +154,7 @@ var NestedSet = /** @class */ (function () {
         var skewEdit = 0;
         if (rightKeyNear > rightKey) {
             skewEdit = rightKeyNear - leftKey + 1 - skewTree;
-            nstd.Structure = nstd.Structure.map(function (n) {
+            this.Structure = this.Structure.map(function (n) {
                 if (n.lkey <= rightKeyNear && n.rkey > leftKey) {
                     if (n.rkey <= rightKey) {
                         n.lkey = n.lkey + skewEdit;
@@ -167,7 +181,7 @@ var NestedSet = /** @class */ (function () {
         }
         else {
             skewEdit = rightKeyNear - leftKey + 1;
-            nstd.Structure = nstd.Structure.map(function (n) {
+            this.Structure = this.Structure.map(function (n) {
                 if (n.rkey > rightKeyNear && n.lkey < rightKey) {
                     if (n.lkey >= leftKey) {
                         n.rkey = n.rkey + skewEdit;
@@ -206,12 +220,12 @@ var NestedSet = /** @class */ (function () {
         return (parents[parents.length - 1] === undefined ? new NestedSetNode(0, 0, 0, 0, 0, 0, 0) : parents[parents.length - 1]);
     };
     NestedSet.prototype.getParents = function (nodeId) {
-        var nstd = this;
-        var parentNode = nstd.getNode(nodeId, false);
+        var _this = this;
+        var parentNode = this.getNode(nodeId, false);
         if (parentNode._id === 0) {
             return [];
         }
-        var parents = nstd.getNodes().filter(function (n) {
+        var parents = this.getNodes().filter(function (n) {
             return n.lkey < parentNode.lkey && n.rkey > parentNode.rkey;
         });
         if (parents.length > 0) {
@@ -223,7 +237,7 @@ var NestedSet = /** @class */ (function () {
                     return -1;
                 return 0;
             }).map(function (n) {
-                n.data = nstd.Data[n.itemId];
+                n.data = _this.Data[n.itemId];
                 results_1.push(n);
             });
             parents = results_1;
@@ -231,12 +245,12 @@ var NestedSet = /** @class */ (function () {
         return parents;
     };
     NestedSet.prototype.getChilds = function (nodeId, depth) {
-        var nstd = this;
-        var parentNode = nstd.getNode(nodeId, false);
+        var _this = this;
+        var parentNode = this.getNode(nodeId, false);
         if (parentNode._id === 0) {
             return [];
         }
-        var childs = nstd.getNodes().filter(function (n) {
+        var childs = this.getNodes().filter(function (n) {
             return n.lkey >= parentNode.lkey && n.rkey <= parentNode.rkey && nodeId !== n._id && (depth === undefined ? true : n.depth <= (parentNode.depth + depth));
         });
         if (childs.length > 0) {
@@ -248,7 +262,7 @@ var NestedSet = /** @class */ (function () {
                     return -1;
                 return 0;
             }).map(function (n) {
-                n.data = nstd.Data[n.itemId];
+                n.data = _this.Data[n.itemId];
                 results_2.push(n);
             });
             childs = results_2;
@@ -256,12 +270,12 @@ var NestedSet = /** @class */ (function () {
         return childs;
     };
     NestedSet.prototype.getBranch = function (nodeId) {
-        var nstd = this;
-        var parentNode = nstd.getNode(nodeId, false);
+        var _this = this;
+        var parentNode = this.getNode(nodeId, false);
         if (parentNode._id === 0) {
             return [];
         }
-        var branch = nstd.getNodes().filter(function (n) {
+        var branch = this.getNodes().filter(function (n) {
             return n.rkey > parentNode.lkey && n.lkey < parentNode.rkey;
         });
         if (branch.length > 0) {
@@ -273,7 +287,7 @@ var NestedSet = /** @class */ (function () {
                     return -1;
                 return 0;
             }).map(function (n) {
-                n.data = nstd.Data[n.itemId];
+                n.data = _this.Data[n.itemId];
                 results_3.push(n);
             });
             branch = results_3;
@@ -281,16 +295,16 @@ var NestedSet = /** @class */ (function () {
         return branch;
     };
     NestedSet.prototype.getTree = function () {
-        var nstd = this;
+        var _this = this;
         var results = [];
-        nstd.getNodes().sort(function (a, b) {
+        this.getNodes().sort(function (a, b) {
             if (a.lkey > b.lkey)
                 return 1;
             if (a.lkey < b.lkey)
                 return -1;
             return 0;
         }).map(function (n) {
-            n.data = nstd.Data[n.itemId];
+            n.data = _this.Data[n.itemId];
             results.push(n);
         });
         return results;
@@ -322,27 +336,24 @@ var NestedSet = /** @class */ (function () {
         return selectedNode.childs === 0;
     };
     NestedSet.prototype.getMaxRightKey = function () {
-        var nstd = this;
-        var maxRKey = Math.max.apply(Math, nstd.Structure.map(function (o) { return o.rkey; }));
+        var maxRKey = Math.max.apply(Math, this.Structure.map(function (o) { return o.rkey; }));
         return maxRKey;
     };
     NestedSet.prototype.getMaxLeftKey = function () {
-        var nstd = this;
-        var maxLKey = Math.max.apply(Math, nstd.Structure.map(function (o) { return o.lkey; }));
+        var maxLKey = Math.max.apply(Math, this.Structure.map(function (o) { return o.lkey; }));
         return maxLKey;
     };
     NestedSet.prototype.getCountNodes = function () {
         return this.Structure.length;
     };
     NestedSet.prototype.checkTree = function () {
-        var nstd = this;
-        var ruleLeftLessRight = nstd.Structure.filter(function (n) {
+        var ruleLeftLessRight = this.Structure.filter(function (n) {
             return n.lkey >= n.rkey;
         });
-        var ruleModKeys = nstd.Structure.filter(function (n) {
+        var ruleModKeys = this.Structure.filter(function (n) {
             return ((n.rkey - n.lkey) % 2) === 0;
         });
-        var ruleDepth = nstd.Structure.filter(function (n) {
+        var ruleDepth = this.Structure.filter(function (n) {
             return ((n.lkey - n.depth + 2) % 2) === 1;
         });
         var errors = [];
@@ -364,11 +375,11 @@ var NestedSet = /** @class */ (function () {
         return errors;
     };
     NestedSet.prototype.debug = function () {
-        var nstd = this;
+        var _this = this;
         var results = [];
-        var tree = nstd.getNodes().map(function (n) {
+        this.getNodes().map(function (n) {
             var s = ' ';
-            results.push(s.repeat(n.depth + 1) + '> ' + JSON.stringify(nstd.Data[n.itemId]) + '(itemId:' + n.itemId + '; nodeId:' + n._id + '; lkey:' + n.lkey + '; rkey:' + n.rkey + '; depth:' + n.depth + '; childs:' + n.childs + ')');
+            results.push(s.repeat(n.depth + 1) + '> ' + JSON.stringify(_this.Data[n.itemId]) + '(itemId:' + n.itemId + '; nodeId:' + n._id + '; lkey:' + n.lkey + '; rkey:' + n.rkey + '; depth:' + n.depth + '; childs:' + n.childs + ')');
         });
         return results;
     };
