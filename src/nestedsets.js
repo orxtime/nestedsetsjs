@@ -38,6 +38,18 @@ var NestedSetRootNode = /** @class */ (function () {
     }
     return NestedSetRootNode;
 }());
+var NestedSetEmptyNode = /** @class */ (function () {
+    function NestedSetEmptyNode() {
+        this._id = 0;
+        this.lkey = 0;
+        this.rkey = 0;
+        this.depth = 0;
+        this.childs = 0;
+        this.parentId = 0;
+        this.itemId = 0;
+    }
+    return NestedSetEmptyNode;
+}());
 var NesteSetError = /** @class */ (function () {
     function NesteSetError() {
         this.LeftLessRight = [];
@@ -56,16 +68,13 @@ var NestedSet = /** @class */ (function () {
         return this.Data[itemId];
     };
     NestedSet.prototype.removeItem = function (itemId) {
+        var _this = this;
         if (this.Data[itemId] !== undefined) {
-            for (var i = 0; i < this.Structure.length; i++) {
-                if (this.Structure[i].itemId === itemId) {
-                    var childs = this.getChilds(this.Structure[i]._id, Infinity);
-                    for (var j = 0; j < childs.length; j++) {
-                        this.removeNode(childs[j]._id);
-                    }
-                    this.Structure.splice(i, 1);
+            this.Structure.forEach(function (node) {
+                if (node.itemId === itemId) {
+                    _this.removeNode(node._id);
                 }
-            }
+            });
             delete this.Data[itemId];
             return true;
         }
@@ -74,17 +83,21 @@ var NestedSet = /** @class */ (function () {
         }
     };
     NestedSet.prototype.addRoot = function (itemId) {
+        this.removeNodes();
+        var newNode;
         if (this.Data[itemId] !== undefined) {
-            this.removeNodes();
-            var newNode = new NestedSetRootNode(itemId);
-            this.Structure.push(newNode);
+            newNode = new NestedSetRootNode(itemId);
         }
-        return this.Structure[0]._id;
+        else {
+            newNode = new NestedSetRootNode(0);
+        }
+        this.Structure.push(newNode);
+        return newNode._id;
     };
     NestedSet.prototype.addNode = function (targetNodeId, itemId) {
         if (this.Data[itemId] !== undefined) {
             var parentNode_1 = this.getNode(targetNodeId, true);
-            if (parentNode_1._id === 0) {
+            if (this.isEmpty(parentNode_1)) {
                 return 0;
             }
             var maxId = Math.max.apply(Math, this.Structure.map(function (o) { return o._id; })) || 0;
@@ -109,24 +122,23 @@ var NestedSet = /** @class */ (function () {
         }
     };
     NestedSet.prototype.getNode = function (nodeId, asCopy) {
-        var selectedNode = this.Structure.filter(function (n) { return n._id === nodeId; });
-        if (Array.isArray(selectedNode) && selectedNode.length === 1) {
+        var selectedNodes = this.Structure.filter(function (n) { return n._id === nodeId; });
+        if (Array.isArray(selectedNodes) && selectedNodes.length === 1) {
             if (asCopy) {
-                var emptyNode = new NestedSetNode(0, 0, 0, 0, 0, 0, 0);
-                return __assign(__assign({}, emptyNode), selectedNode[0]);
+                return __assign({}, selectedNodes[0]);
             }
             else {
-                return selectedNode[0];
+                return selectedNodes[0];
             }
         }
         else {
-            return new NestedSetNode(0, 0, 0, 0, 0, 0, 0);
+            return new NestedSetEmptyNode();
         }
     };
     NestedSet.prototype.removeNode = function (nodeId) {
         var selectedNode = this.getNode(nodeId, true);
         var parentNode = this.getParent(nodeId);
-        if (selectedNode._id === 0) {
+        if (this.isEmpty(selectedNode)) {
             return false;
         }
         parentNode.childs--;
@@ -217,12 +229,12 @@ var NestedSet = /** @class */ (function () {
     };
     NestedSet.prototype.getParent = function (nodeId) {
         var parents = this.getParents(nodeId);
-        return (parents[parents.length - 1] === undefined ? new NestedSetNode(0, 0, 0, 0, 0, 0, 0) : parents[parents.length - 1]);
+        return (parents[parents.length - 1] === undefined ? new NestedSetEmptyNode() : parents[parents.length - 1]);
     };
     NestedSet.prototype.getParents = function (nodeId) {
         var _this = this;
         var parentNode = this.getNode(nodeId, false);
-        if (parentNode._id === 0) {
+        if (this.isEmpty(parentNode)) {
             return [];
         }
         var parents = this.getNodes().filter(function (n) {
@@ -230,13 +242,7 @@ var NestedSet = /** @class */ (function () {
         });
         if (parents.length > 0) {
             var results_1 = [];
-            parents.sort(function (a, b) {
-                if (a.lkey > b.lkey)
-                    return 1;
-                if (a.lkey < b.lkey)
-                    return -1;
-                return 0;
-            }).map(function (n) {
+            parents.map(function (n) {
                 n.data = _this.Data[n.itemId];
                 results_1.push(n);
             });
@@ -247,7 +253,7 @@ var NestedSet = /** @class */ (function () {
     NestedSet.prototype.getChilds = function (nodeId, depth) {
         var _this = this;
         var parentNode = this.getNode(nodeId, false);
-        if (parentNode._id === 0) {
+        if (this.isEmpty(parentNode)) {
             return [];
         }
         var childs = this.getNodes().filter(function (n) {
@@ -255,13 +261,7 @@ var NestedSet = /** @class */ (function () {
         });
         if (childs.length > 0) {
             var results_2 = [];
-            childs.sort(function (a, b) {
-                if (a.lkey > b.lkey)
-                    return 1;
-                if (a.lkey < b.lkey)
-                    return -1;
-                return 0;
-            }).map(function (n) {
+            childs.map(function (n) {
                 n.data = _this.Data[n.itemId];
                 results_2.push(n);
             });
@@ -272,7 +272,7 @@ var NestedSet = /** @class */ (function () {
     NestedSet.prototype.getBranch = function (nodeId) {
         var _this = this;
         var parentNode = this.getNode(nodeId, false);
-        if (parentNode._id === 0) {
+        if (this.isEmpty(parentNode)) {
             return [];
         }
         var branch = this.getNodes().filter(function (n) {
@@ -280,13 +280,7 @@ var NestedSet = /** @class */ (function () {
         });
         if (branch.length > 0) {
             var results_3 = [];
-            branch.sort(function (a, b) {
-                if (a.lkey > b.lkey)
-                    return 1;
-                if (a.lkey < b.lkey)
-                    return -1;
-                return 0;
-            }).map(function (n) {
+            branch.map(function (n) {
                 n.data = _this.Data[n.itemId];
                 results_3.push(n);
             });
@@ -297,13 +291,7 @@ var NestedSet = /** @class */ (function () {
     NestedSet.prototype.getTree = function () {
         var _this = this;
         var results = [];
-        this.getNodes().sort(function (a, b) {
-            if (a.lkey > b.lkey)
-                return 1;
-            if (a.lkey < b.lkey)
-                return -1;
-            return 0;
-        }).map(function (n) {
+        this.getNodes().map(function (n) {
             n.data = _this.Data[n.itemId];
             results.push(n);
         });
@@ -314,23 +302,26 @@ var NestedSet = /** @class */ (function () {
         this.Data = [];
         return this.Structure.length === 0 && Object.keys(this.Data).length === 0;
     };
+    NestedSet.prototype.isEmpty = function (node) {
+        return node._id === 0;
+    };
     NestedSet.prototype.isRoot = function (nodeId) {
         var selectedNode = this.getNode(nodeId, false);
-        if (selectedNode._id === 0) {
+        if (this.isEmpty(selectedNode)) {
             return false;
         }
         return selectedNode.parentId === 0;
     };
     NestedSet.prototype.isBranch = function (nodeId) {
         var selectedNode = this.getNode(nodeId, false);
-        if (selectedNode._id === 0) {
+        if (this.isEmpty(selectedNode)) {
             return false;
         }
         return selectedNode.childs > 0;
     };
     NestedSet.prototype.isLeaf = function (nodeId) {
         var selectedNode = this.getNode(nodeId, false);
-        if (selectedNode._id === 0) {
+        if (this.isEmpty(selectedNode)) {
             return false;
         }
         return selectedNode.childs === 0;
