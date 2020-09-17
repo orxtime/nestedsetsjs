@@ -1,34 +1,31 @@
 module.exports = function () {
-  var _nestedsets = {}
-  _nestedsets.Structure = []
-  _nestedsets.Data = {}
+  var _ns = {}
+  _ns.Structure = []
+  _ns.Data = {}
 
-  _nestedsets.setItem = function (itemId, itemData) {
-    var nstd = this
-    nstd.Data[itemId] = itemData
+  _ns.setItem = (itemId, itemData) => {
+    _ns.Data[itemId] = itemData
+    return _ns.Data[itemId]
   }
 
-  _nestedsets.removeItem = function (itemId) {
-    var nstd = this
-    if (nstd.Data[itemId] !== undefined) {
-      for (var i = 0; i < nstd.Structure.length; i++) {
-        if (nstd.Structure[i].itemId === itemId) {
-          var childs = nstd.getChilds(nstd.Structure[i]._id)
-          for (var j = 0; j < childs.length; j++) {
-            nstd.removeNode(childs[j]._id)
-          }
-          nstd.Structure.splice(i, 1)
+  _ns.removeItem = (itemId) => {
+    if (_ns.Data[itemId] !== undefined) {
+      for (var i = 0; i < _ns.Structure.length; i++) {
+        if (_ns.Structure[i].itemId === itemId) {
+          _ns.removeNode(_ns.Structure[i]._id)
         }
       }
-      delete nstd.Data[itemId]
+      delete _ns.Data[itemId]
+      return true
+    } else {
+      return false
     }
   }
 
-  _nestedsets.addRoot = function (itemId) {
-    var nstd = this
-    if (nstd.Data[itemId] !== undefined) {
-      nstd.removeNodes()
-      nstd.Structure.push({
+  _ns.addRoot = (itemId) => {
+    if (_ns.Data[itemId] !== undefined) {
+      _ns.removeNodes()
+      _ns.Structure.push({
         _id: 1,
         lkey: 1,
         rkey: 2,
@@ -38,32 +35,32 @@ module.exports = function () {
         itemId: itemId
       })
     }
-    return 1
+    return _ns.Structure[0]._id
   }
 
-  _nestedsets.addNode = function (targetNodeId, itemId) {
-    var nstd = this
-    if (nstd.Data[itemId] !== undefined) {
-      var parentNode = nstd.getNode(targetNodeId, 'new')
+  _ns.addNode = (targetNodeId, itemId) => {
+    if (_ns.Data[itemId] !== undefined) {
+      var parentNode = _ns.getNode(targetNodeId, true)
 
       if (!parentNode) {
         return false
       }
 
-      var maxId = Math.max.apply(Math, nstd.Structure.map(function (o) { return o._id })) || 0
+      var maxId = Math.max(..._ns.Structure.map(o => o._id)) || 0
 
-      nstd.Structure = nstd.Structure.map(n => {
+      _ns.Structure = _ns.Structure.map(n => {
         if (n.lkey > parentNode.rkey) {
           n.lkey += 2
           n.rkey += 2
         }
         if (n.rkey >= parentNode.rkey && n.lkey < parentNode.rkey) {
           n.rkey += 2
+          n.childs++
         }
         return n
       })
 
-      var node = {
+      _ns.Structure.push({
         _id: maxId + 1,
         lkey: parentNode.rkey,
         rkey: parentNode.rkey + 1,
@@ -71,24 +68,19 @@ module.exports = function () {
         childs: 0,
         parentId: parentNode._id,
         itemId: itemId
-      }
-
-      parentNode = nstd.getNode(targetNodeId)
-      parentNode.childs++
-
-      nstd.Structure.push(node)
+      })
 
       return maxId + 1
     }
   }
 
-  _nestedsets.getNode = function (nodeId, asCopy) {
-    var nstd = this
+  _ns.getNode = function (nodeId, asCopy) {
+    var _ns = this
 
-    var selectedNode = nstd.Structure.filter(n => n._id === nodeId)
+    var selectedNode = _ns.Structure.filter(n => n._id === nodeId)
     if (Array.isArray(selectedNode) && selectedNode.length === 1) {
-      if (asCopy) {
-        return Object.assign({}, selectedNode[0])
+      if (asCopy === true) {
+        return { ...selectedNode[0] }
       } else {
         return selectedNode[0]
       }
@@ -97,37 +89,33 @@ module.exports = function () {
     }
   }
 
-  _nestedsets.removeNode = function (nodeId) {
-    var nstd = this
-
-    var selectedNode = nstd.getNode(nodeId, true)
-    var parentNode = nstd.getParent(nodeId)
+  _ns.removeNode = function (nodeId) {
+    var selectedNode = _ns.getNode(nodeId, true)
+    var lengthBranchRem = _ns.getChilds(nodeId).length + 1
 
     if (!selectedNode) {
       return false
     }
 
-    parentNode.childs--
-
-    nstd.Structure = nstd.getNodes().filter(n => {
-      return !(n.lkey >= selectedNode.lkey && n.rkey <= selectedNode.rkey)
-    }).map(n => {
+    _ns.Structure = _ns.getNodes().map(n => {
+      if (n.rkey > selectedNode.rkey && n.lkey < selectedNode.lkey) {
+        n.childs = n.childs - lengthBranchRem
+      }
+      return n
+    }).filter(n => !(n.lkey >= selectedNode.lkey && n.rkey <= selectedNode.rkey)).map(n => {
       if (n.rkey > selectedNode.rkey) {
         n.lkey = (n.lkey > selectedNode.lkey ? n.lkey - (selectedNode.rkey - selectedNode.lkey + 1) : n.lkey)
         n.rkey = n.rkey - (selectedNode.rkey - selectedNode.lkey + 1)
       }
-
       return n
     })
 
-    return nstd.Structure
+    return _ns.Structure
   }
 
-  _nestedsets.moveNode = function (nodeId, targetNodeId) {
-    var nstd = this
-
-    var movedNode = nstd.getNode(nodeId, true)
-    var targetNode = nstd.getNode(targetNodeId, true)
+  _ns.moveNode = function (nodeId, targetNodeId) {
+    var movedNode = _ns.getNode(nodeId, true)
+    var targetNode = _ns.getNode(targetNodeId, true)
 
     var level = movedNode.depth
     var rightKey = movedNode.rkey
@@ -143,7 +131,7 @@ module.exports = function () {
 
     if (rightKeyNear > rightKey) {
       skewEdit = rightKeyNear - leftKey + 1 - skewTree
-      nstd.Structure = nstd.Structure.map(n => {
+      _ns.Structure = _ns.Structure.map(n => {
         if (n.lkey <= rightKeyNear && n.rkey > leftKey) {
           if (n.rkey <= rightKey) {
             n.lkey = n.lkey + skewEdit
@@ -168,7 +156,7 @@ module.exports = function () {
       })
     } else {
       skewEdit = rightKeyNear - leftKey + 1
-      nstd.Structure = nstd.Structure.map(n => {
+      _ns.Structure = _ns.Structure.map(n => {
         if (n.rkey > rightKeyNear && n.lkey < rightKey) {
           if (n.lkey >= leftKey) {
             n.rkey = n.rkey + skewEdit
@@ -194,205 +182,108 @@ module.exports = function () {
     }
   }
 
-  _nestedsets.getNodes = function () {
-    var nstd = this
-    return nstd.Structure.sort((a, b) => {
-      if (a.lkey > b.lkey) return 1
-      if (a.lkey < b.lkey) return -1
-      return 0
-    })
+  _ns.getNodes = function () {
+    return _ns.Structure.sort((a, b) => a.lkey - b.lkey)
   }
 
-  _nestedsets.removeNodes = function () {
-    var nstd = this
-    nstd.Structure = []
+  _ns.removeNodes = function () {
+    _ns.Structure = []
   }
 
-  _nestedsets.getParent = function (nodeId) {
-    var nstd = this
-
-    var parents = nstd.getParents(nodeId)
-
+  _ns.getParent = function (nodeId) {
+    var parents = _ns.getParents(nodeId)
     return (parents[parents.length - 1] === undefined ? false : parents[parents.length - 1])
   }
 
-  _nestedsets.getParents = function (nodeId) {
-    var nstd = this
-
-    var parentNode = nstd.getNode(nodeId)
-
+  _ns.getParents = function (nodeId) {
+    var parentNode = _ns.getNode(nodeId, true)
     if (!parentNode) {
       return []
-    }
-
-    var parents = nstd.getNodes().filter(n => {
-      return n.lkey < parentNode.lkey && n.rkey > parentNode.rkey
-    })
-
-    if (parents.length > 0) {
-      var results = []
-      parents.sort((a, b) => {
-        if (a.lkey > b.lkey) return 1
-        if (a.lkey < b.lkey) return -1
-        return 0
+    } else {
+      return _ns.getNodes().filter(n => {
+        return n.lkey < parentNode.lkey && n.rkey > parentNode.rkey
       }).map(n => {
-        n.data = nstd.Data[n.itemId]
-        results.push(n)
+        n.data = _ns.Data[n.itemId]
+        return n
       })
-      parents = results
     }
-
-    return parents
   }
 
-  _nestedsets.getChilds = function (nodeId, depth) {
-    var nstd = this
-
-    var parentNode = nstd.getNode(nodeId)
-
+  _ns.getChilds = function (nodeId, depth) {
+    var parentNode = _ns.getNode(nodeId, true)
     if (!parentNode) {
       return []
-    }
-
-    var childs = nstd.getNodes().filter(n => {
-      return n.lkey >= parentNode.lkey && n.rkey <= parentNode.rkey && nodeId !== n._id && (depth === undefined ? true : n.depth <= (parentNode.depth + depth))
-    })
-
-    if (childs.length > 0) {
-      var results = []
-      childs.sort((a, b) => {
-        if (a.lkey > b.lkey) return 1
-        if (a.lkey < b.lkey) return -1
-        return 0
+    } else {
+      return _ns.getNodes().filter(n => {
+        return n.lkey >= parentNode.lkey && n.rkey <= parentNode.rkey && nodeId !== n._id && (depth === undefined ? true : n.depth <= (parentNode.depth + depth))
       }).map(n => {
-        n.data = nstd.Data[n.itemId]
-        results.push(n)
+        n.data = _ns.Data[n.itemId]
+        return n
       })
-      childs = results
     }
-
-    return childs
   }
 
-  _nestedsets.getBranch = function (nodeId) {
-    var nstd = this
-
-    var parentNode = nstd.getNode(nodeId)
-
+  _ns.getBranch = function (nodeId) {
+    var parentNode = _ns.getNode(nodeId)
     if (!parentNode) {
       return []
-    }
-
-    var branch = nstd.getNodes().filter(n => {
-      return n.rkey > parentNode.lkey && n.lkey < parentNode.rkey
-    })
-
-    if (branch.length > 0) {
-      var results = []
-      branch.sort((a, b) => {
-        if (a.lkey > b.lkey) return 1
-        if (a.lkey < b.lkey) return -1
-        return 0
+    } else {
+      return _ns.getNodes().filter(n => {
+        return n.rkey > parentNode.lkey && n.lkey < parentNode.rkey
       }).map(n => {
-        n.data = nstd.Data[n.itemId]
-        results.push(n)
+        n.data = _ns.Data[n.itemId]
+        return n
       })
-      branch = results
     }
-
-    return branch
   }
 
-  _nestedsets.getTree = function (tree) {
-    var nstd = this
-    var results = []
-    tree = tree || nstd.getNodes()
-    tree.sort((a, b) => {
-      if (a.lkey > b.lkey) return 1
-      if (a.lkey < b.lkey) return -1
-      return 0
-    }).map(n => {
-      n.data = nstd.Data[n.itemId]
-      results.push(n)
+  _ns.getTree = function () {
+    return _ns.getNodes().map(n => {
+      n.data = _ns.Data[n.itemId]
+      return n
     })
-    return results
   }
 
-  _nestedsets.clearAll = function (itemId) {
-    var nstd = this
-    nstd.Structure = []
-    nstd.Data = {}
+  _ns.clearAll = function () {
+    _ns.Structure = []
+    _ns.Data = {}
   }
 
-  _nestedsets.isRoot = function (nodeId) {
-    var nstd = this
-
-    var selectedNode = nstd.getNode(nodeId)
-
-    if (!selectedNode) {
-      return false
-    }
-
-    return selectedNode.parentId === 0
+  _ns.isRoot = function (nodeId) {
+    var selectedNode = _ns.getNode(nodeId)
+    return selectedNode && selectedNode.parentId === 0
   }
 
-  _nestedsets.isBranch = function (nodeId) {
-    var nstd = this
-
-    var selectedNode = nstd.getNode(nodeId)
-
-    if (!selectedNode) {
-      return false
-    }
-
-    return selectedNode.childs > 0
+  _ns.isBranch = function (nodeId) {
+    var selectedNode = _ns.getNode(nodeId)
+    return selectedNode && selectedNode.childs > 0
   }
 
-  _nestedsets.isLeaf = function (nodeId) {
-    var nstd = this
-
-    var selectedNode = nstd.getNode(nodeId)
-
-    if (!selectedNode) {
-      return false
-    }
-
-    return selectedNode.childs === 0
+  _ns.isLeaf = function (nodeId) {
+    var selectedNode = _ns.getNode(nodeId)
+    return selectedNode && selectedNode.childs === 0
   }
 
-  _nestedsets.getMaxRightKey = function () {
-    var nstd = this
-
-    var maxRKey = Math.max.apply(Math, nstd.Structure.map(function (o) { return o.rkey }))
-    return maxRKey
+  _ns.getMaxRightKey = function () {
+    return Math.max(..._ns.Structure.map(o => o.rkey))
   }
 
-  _nestedsets.getMaxLeftKey = function () {
-    var nstd = this
-
-    var maxLKey = Math.max.apply(Math, nstd.Structure.map(function (o) { return o.lkey }))
-    return maxLKey
+  _ns.getMaxLeftKey = function () {
+    return Math.max(..._ns.Structure.map(o => o.lkey))
   }
 
-  _nestedsets.getCountNodes = function () {
-    var nstd = this
-
-    var countNodes = nstd.Structure.length
-    return countNodes
+  _ns.getCountNodes = function () {
+    return _ns.Structure.length
   }
 
-  _nestedsets.checkTree = function () {
-    var nstd = this
-
-    var ruleLeftLessRight = nstd.Structure.filter(n => {
+  _ns.checkTree = function () {
+    var ruleLeftLessRight = _ns.Structure.filter(n => {
       return n.lkey >= n.rkey
     })
-
-    var ruleModKeys = nstd.Structure.filter(n => {
+    var ruleModKeys = _ns.Structure.filter(n => {
       return ((n.rkey - n.lkey) % 2) === 0
     })
-
-    var ruleDepth = nstd.Structure.filter(n => {
+    var ruleDepth = _ns.Structure.filter(n => {
       return ((n.lkey - n.depth + 2) % 2) === 1
     })
 
@@ -403,13 +294,11 @@ module.exports = function () {
         LeftLessRight: ruleLeftLessRight
       })
     }
-
     if (ruleModKeys.length !== 0) {
       errors.push({
         ModKeys: ruleModKeys
       })
     }
-
     if (ruleDepth.length !== 0) {
       errors.push({
         Depth: ruleDepth
@@ -419,16 +308,11 @@ module.exports = function () {
     return errors
   }
 
-  _nestedsets.debug = function (tree) {
-    var nstd = this
-    var results = []
-    tree = tree || nstd.getNodes()
-    tree.map(n => {
-      var s = ' '
-      results.push(s.repeat(n.depth + 1) + '> ' + JSON.stringify(nstd.Data[n.itemId]) + '(itemId:' + n.itemId + '; nodeId:' + n._id + '; lkey:' + n.lkey + '; rkey:' + n.rkey + '; depth:' + n.depth + '; childs:' + n.childs + ')')
+  _ns.debug = function () {
+    return _ns.getNodes().map(n => {
+      return String(' ').repeat(n.depth + 1) + '> ' + JSON.stringify(_ns.Data[n.itemId]) + '(itemId:' + n.itemId + '; nodeId:' + n._id + '; lkey:' + n.lkey + '; rkey:' + n.rkey + '; depth:' + n.depth + '; childs:' + n.childs + ')'
     })
-    return results
   }
 
-  return _nestedsets
+  return _ns
 }

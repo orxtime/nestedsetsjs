@@ -34,11 +34,15 @@ describe('addNode', function () {
     var NestedSet = ns()
     NestedSet.setItem(1, 10000)
     NestedSet.setItem(2, 20000)
+    NestedSet.setItem(3, 20000)
 
     var rootNodeId = NestedSet.addRoot(1, 1)
-    NestedSet.addNode(rootNodeId, 2)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    NestedSet.addNode(parentNodeId, 3)
 
-    assert.equal(NestedSet.Structure[1].itemId, 2)
+    var errors = NestedSet.checkTree()
+
+    assert.equal(NestedSet.Structure[0].itemId === 1 && NestedSet.Structure[1].itemId === 2 && NestedSet.Structure[2].itemId === 3 && NestedSet.Structure[0].childs === 2 && NestedSet.Structure[1].childs === 1 && NestedSet.Structure[2].childs === 0 && errors.length === 0, true)
   })
 })
 
@@ -76,25 +80,6 @@ describe('checkTree', function () {
   })
 })
 
-describe('removeItem', function () {
-  it('Removes an item with its dependent nodes', function () {
-    var NestedSet = ns()
-    NestedSet.setItem(1, 10000)
-    NestedSet.setItem(2, 20000)
-    NestedSet.setItem(3, 30000)
-
-    var rootNodeId = NestedSet.addRoot(1, 1)
-    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
-    NestedSet.addNode(parentNodeId, 3)
-
-    NestedSet.removeItem(2)
-
-    var errors = NestedSet.checkTree()
-
-    assert.equal(NestedSet.Structure[1] === undefined && NestedSet.Structure[2] === undefined && NestedSet.Data[2] === undefined && errors.length === 0, true)
-  })
-})
-
 describe('getNode', function () {
   it('Gets a node by ID', function () {
     var NestedSet = ns()
@@ -122,10 +107,51 @@ describe('removeNode', function () {
     NestedSet.addNode(parentNodeId, 3)
 
     NestedSet.removeNode(parentNodeId)
+    var errors = NestedSet.checkTree()
+    var rootNode = NestedSet.getNode(rootNodeId)
+
+    assert.equal(NestedSet.Structure[1] === undefined && NestedSet.Structure[2] === undefined && errors.length === 0 && rootNode.childs === 0, true)
+  })
+})
+
+describe('removeItem', function () {
+  it('Removes an item with its dependent nodes', function () {
+    var NestedSet = ns()
+    NestedSet.setItem(1, 10000)
+    NestedSet.setItem(2, 20000)
+    NestedSet.setItem(3, 30000)
+
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    NestedSet.addNode(parentNodeId, 3)
+
+    NestedSet.removeItem(2)
 
     var errors = NestedSet.checkTree()
+    var rootNode = NestedSet.getNode(1)
 
-    assert.equal(NestedSet.Structure[1] === undefined && NestedSet.Structure[2] === undefined && errors.length === 0, true)
+    assert.equal(NestedSet.Structure[1] === undefined && NestedSet.Structure[2] === undefined && NestedSet.Data[2] === undefined && errors.length === 0 && rootNode.childs === 0, true)
+  })
+  it('Removes an item without its dependent nodes', function () {
+    var NestedSet = ns()
+    NestedSet.setItem(1, 10000)
+    NestedSet.setItem(2, 20000)
+    NestedSet.setItem(3, 30000)
+    NestedSet.setItem(4, 40000)
+
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    var parentNode2Id = NestedSet.addNode(parentNodeId, 3)
+    NestedSet.addNode(parentNode2Id, 4)
+
+    NestedSet.removeItem(4)
+
+    var errors = NestedSet.checkTree()
+    var rootNode = NestedSet.getNode(1)
+    var parentNode = NestedSet.getNode(2)
+    var parentNode2 = NestedSet.getNode(3)
+
+    assert.equal(NestedSet.Structure[3] === undefined && NestedSet.Data[4] === undefined && errors.length === 0 && rootNode.childs === 2 && parentNode.childs === 1 && parentNode2.childs === 0, true)
   })
 })
 

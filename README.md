@@ -48,7 +48,7 @@ console.log(NestedSet.debug())
 Sets data for an item
 - id - ID item
 - data - Stored data
-
+Returns Stored data in Data propert
 ```
 NestedSet.setItem(1, { title: "Root"})
 ```
@@ -58,7 +58,7 @@ NestedSet.setItem(1, { title: "Root"})
 ### removeItem(id)
 Removes an item with its dependent nodes
 - id - ID item
-
+Returns TRUE if item exists or FALSE if not exists
 ```
 NestedSet.removeItem(1)
 ```
@@ -67,7 +67,7 @@ NestedSet.removeItem(1)
 ### addRoot(item_id)
 Initializes the Nested Sets structure. Adds a root node and sets an item for it
 - item_id - item ID
-
+Returns node ID = 1
 ```
 NestedSet.addRoot(1)
 ```
@@ -77,7 +77,7 @@ NestedSet.addRoot(1)
 Adds a new node to the specified parent node and sets an item for it
 - target_node_id - parent node ID
 - item_id - item ID
-
+Returns node ID
 ```
 NestedSet.addNode(1, 1)
 ```
@@ -87,7 +87,7 @@ NestedSet.addNode(1, 1)
 Gets a node by ID
 - node_id - node ID
 - asCopy - **true** (will return a copy of the object) / **false** or **undefined** (will return the object itself)
-
+Returns node object
 ```
 NestedSet.getNode(1)
 ```
@@ -96,7 +96,7 @@ NestedSet.getNode(1)
 ### removeNode(node_id)
 Removes a node by its ID
 - node_id - node ID
-
+Returns new Structure
 ```
 NestedSet.removeNode(1)
 ```
@@ -212,6 +212,12 @@ Displays information about nodes and items
   ...
 ]
 ```
+Returns this scheme for methods
+- getParent
+- getParents
+- getChilds
+- getBranch
+- getTree
 
 ## Tests
 ```
@@ -222,6 +228,6 @@ npm test
 ## ESLint
 ```
 npm install
-npx eslint nestedsets.js
-npx eslint test/test.js
+npx eslint ./src/nestedsets.js
+npx eslint ./test/test.js
 ```
