@@ -74,9 +74,7 @@ module.exports = function () {
     }
   }
 
-  _ns.getNode = function (nodeId, asCopy) {
-    var _ns = this
-
+  _ns.getNode = (nodeId, asCopy) => {
     var selectedNode = _ns.Structure.filter(n => n._id === nodeId)
     if (Array.isArray(selectedNode) && selectedNode.length === 1) {
       if (asCopy === true) {
@@ -89,7 +87,7 @@ module.exports = function () {
     }
   }
 
-  _ns.removeNode = function (nodeId) {
+  _ns.removeNode = (nodeId) => {
     var selectedNode = _ns.getNode(nodeId, true)
     var lengthBranchRem = _ns.getChilds(nodeId).length + 1
 
@@ -113,7 +111,7 @@ module.exports = function () {
     return _ns.Structure
   }
 
-  _ns.moveNode = function (nodeId, targetNodeId) {
+  _ns.moveNode = (nodeId, targetNodeId) => {
     var movedNode = _ns.getNode(nodeId, true)
     var targetNode = _ns.getNode(targetNodeId, true)
 
@@ -182,20 +180,20 @@ module.exports = function () {
     }
   }
 
-  _ns.getNodes = function () {
+  _ns.getNodes = () => {
     return _ns.Structure.sort((a, b) => a.lkey - b.lkey)
   }
 
-  _ns.removeNodes = function () {
+  _ns.removeNodes = () => {
     _ns.Structure = []
   }
 
-  _ns.getParent = function (nodeId) {
+  _ns.getParent = (nodeId) => {
     var parents = _ns.getParents(nodeId)
     return (parents[parents.length - 1] === undefined ? false : parents[parents.length - 1])
   }
 
-  _ns.getParents = function (nodeId) {
+  _ns.getParents = (nodeId) => {
     var parentNode = _ns.getNode(nodeId, true)
     if (!parentNode) {
       return []
@@ -209,7 +207,7 @@ module.exports = function () {
     }
   }
 
-  _ns.getChilds = function (nodeId, depth) {
+  _ns.getChilds = (nodeId, depth) => {
     var parentNode = _ns.getNode(nodeId, true)
     if (!parentNode) {
       return []
@@ -223,7 +221,7 @@ module.exports = function () {
     }
   }
 
-  _ns.getBranch = function (nodeId) {
+  _ns.getBranch = (nodeId) => {
     var parentNode = _ns.getNode(nodeId)
     if (!parentNode) {
       return []
@@ -237,46 +235,46 @@ module.exports = function () {
     }
   }
 
-  _ns.getTree = function () {
+  _ns.getTree = () => {
     return _ns.getNodes().map(n => {
       n.data = _ns.Data[n.itemId]
       return n
     })
   }
 
-  _ns.clearAll = function () {
+  _ns.clearAll = () => {
     _ns.Structure = []
     _ns.Data = {}
   }
 
-  _ns.isRoot = function (nodeId) {
+  _ns.isRoot = (nodeId) => {
     var selectedNode = _ns.getNode(nodeId)
     return selectedNode && selectedNode.parentId === 0
   }
 
-  _ns.isBranch = function (nodeId) {
+  _ns.isBranch = (nodeId) => {
     var selectedNode = _ns.getNode(nodeId)
     return selectedNode && selectedNode.childs > 0
   }
 
-  _ns.isLeaf = function (nodeId) {
+  _ns.isLeaf = (nodeId) => {
     var selectedNode = _ns.getNode(nodeId)
     return selectedNode && selectedNode.childs === 0
   }
 
-  _ns.getMaxRightKey = function () {
+  _ns.getMaxRightKey = () => {
     return Math.max(..._ns.Structure.map(o => o.rkey))
   }
 
-  _ns.getMaxLeftKey = function () {
+  _ns.getMaxLeftKey = () => {
     return Math.max(..._ns.Structure.map(o => o.lkey))
   }
 
-  _ns.getCountNodes = function () {
+  _ns.getCountNodes = () => {
     return _ns.Structure.length
   }
 
-  _ns.checkTree = function () {
+  _ns.checkTree = () => {
     var ruleLeftLessRight = _ns.Structure.filter(n => {
       return n.lkey >= n.rkey
     })
@@ -308,7 +306,7 @@ module.exports = function () {
     return errors
   }
 
-  _ns.debug = function () {
+  _ns.debug = () => {
     return _ns.getNodes().map(n => {
       return String(' ').repeat(n.depth + 1) + '> ' + JSON.stringify(_ns.Data[n.itemId]) + '(itemId:' + n.itemId + '; nodeId:' + n._id + '; lkey:' + n.lkey + '; rkey:' + n.rkey + '; depth:' + n.depth + '; childs:' + n.childs + ')'
     })
