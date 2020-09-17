@@ -119,13 +119,13 @@ class NesteSetError implements INesteSetError {
   Depth?: NestedSetNode[] = [];
 }
 
-class NestedSet implements INestedSet {
+export class NestedSet implements INestedSet {
   Structure: NestedSetNode[];
   Data: NestedSetItem[];
 
-  constructor (Structure: NestedSetNode[], Data: NestedSetItem[]) {
-    this.Structure = Structure
-    this.Data = Data
+  constructor (Structure: NestedSetNode[] | void, Data: NestedSetItem[] | void) {
+    this.Structure = Structure || []
+    this.Data = Data || []
   }
 
   setItem (itemId: number, itemData: NestedSetItem) {
@@ -135,9 +135,9 @@ class NestedSet implements INestedSet {
 
   removeItem (itemId: number) {
     if (this.Data[itemId] !== undefined) {
-      this.Structure.forEach(node => {
-        if (node.itemId === itemId) {
-          this.removeNode(node._id)
+      this.Structure.map(n => {
+        if (n.itemId === itemId) {
+          this.removeNode(n._id)
         }
       })
       delete this.Data[itemId]
@@ -317,22 +317,15 @@ class NestedSet implements INestedSet {
 
     if (this.isEmpty(parentNode)) {
       return []
-    }
-
-    let parents = this.getNodes().filter(n => {
-      return n.lkey < parentNode.lkey && n.rkey > parentNode.rkey
-    })
-
-    if (parents.length > 0) {
-      const results: NestedSetNode[] = []
-      parents.map(n => {
+    } else {
+      return this.getNodes().filter(n => {
+        return n.lkey < parentNode.lkey && n.rkey > parentNode.rkey
+      }).map(n => {
         n.data = this.Data[n.itemId]
-        results.push(n)
-      })
-      parents = results
+        return n
+      }) 
     }
 
-    return parents
   }
 
   getChilds (nodeId: number, depth: number) {
@@ -340,22 +333,15 @@ class NestedSet implements INestedSet {
 
     if (this.isEmpty(parentNode)) {
       return []
-    }
-
-    let childs = this.getNodes().filter(n => {
-      return n.lkey >= parentNode.lkey && n.rkey <= parentNode.rkey && nodeId !== n._id && (depth === undefined ? true : n.depth <= (parentNode.depth + depth))
-    })
-
-    if (childs.length > 0) {
-      const results: NestedSetNode[] = []
-      childs.map(n => {
+    } else {
+      return this.getNodes().filter(n => {
+        return n.lkey >= parentNode.lkey && n.rkey <= parentNode.rkey && nodeId !== n._id && (depth === undefined ? true : n.depth <= (parentNode.depth + depth))
+      }).map(n => {
         n.data = this.Data[n.itemId]
-        results.push(n)
+        return n
       })
-      childs = results
     }
-
-    return childs
+    
   }
 
   getBranch (nodeId: number) {
@@ -363,31 +349,22 @@ class NestedSet implements INestedSet {
 
     if (this.isEmpty(parentNode)) {
       return []
-    }
-
-    let branch = this.getNodes().filter(n => {
-      return n.rkey > parentNode.lkey && n.lkey < parentNode.rkey
-    })
-
-    if (branch.length > 0) {
-      const results: NestedSetNode[] = []
-      branch.map(n => {
+    } else {
+      return this.getNodes().filter(n => {
+        return n.rkey > parentNode.lkey && n.lkey < parentNode.rkey
+      }).map(n => {
         n.data = this.Data[n.itemId]
-        results.push(n)
+        return n
       })
-      branch = results
     }
 
-    return branch
   }
 
   getTree () {
-    const results: NestedSetNode[] = []
-    this.getNodes().map(n => {
+    return this.getNodes().map(n => {
       n.data = this.Data[n.itemId]
-      results.push(n)
+      return n
     })
-    return results
   }
 
   clearAll () {
@@ -425,13 +402,11 @@ class NestedSet implements INestedSet {
   }
 
   getMaxRightKey () {
-    const maxRKey = Math.max(...this.Structure.map(o => o.rkey))
-    return maxRKey
+    return Math.max(...this.Structure.map(o => o.rkey))
   }
 
   getMaxLeftKey () {
-    const maxLKey = Math.max(...this.Structure.map(o => o.lkey))
-    return maxLKey
+    return Math.max(...this.Structure.map(o => o.lkey))
   }
 
   getCountNodes () {
@@ -475,15 +450,10 @@ class NestedSet implements INestedSet {
   }
 
   debug () {
-    const results: string[] = []
-    this.getNodes().map(n => {
-      const s = ' '
-      results.push(s.repeat(n.depth + 1) + '> ' + JSON.stringify(this.Data[n.itemId]) + '(itemId:' + n.itemId + '; nodeId:' + n._id + '; lkey:' + n.lkey + '; rkey:' + n.rkey + '; depth:' + n.depth + '; childs:' + n.childs + ')')
-    })
-    return results
+    return this.getNodes().map(n => String(' ').repeat(n.depth + 1) + '> ' + JSON.stringify(this.Data[n.itemId]) + '(itemId:' + n.itemId + '; nodeId:' + n._id + '; lkey:' + n.lkey + '; rkey:' + n.rkey + '; depth:' + n.depth + '; childs:' + n.childs + ')')
   }
 }
 
-module.exports = () => {
-  return new NestedSet([], [])
+module.exports = function () {
+  return new NestedSet()
 }

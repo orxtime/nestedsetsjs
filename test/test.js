@@ -1,5 +1,5 @@
 var assert = require('assert')
-var ns = require('../nestedsets.js')
+const ns = require("../nestedsets.js")
 
 describe('Properties', function () {
   it('Data exists', function () {

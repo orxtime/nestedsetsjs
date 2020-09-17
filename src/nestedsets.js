@@ -1,3 +1,4 @@
+"use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -9,6 +10,8 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+exports.__esModule = true;
+exports.NestedSet = void 0;
 var NestedSetItem = /** @class */ (function () {
     function NestedSetItem() {
     }
@@ -60,8 +63,8 @@ var NesteSetError = /** @class */ (function () {
 }());
 var NestedSet = /** @class */ (function () {
     function NestedSet(Structure, Data) {
-        this.Structure = Structure;
-        this.Data = Data;
+        this.Structure = Structure || [];
+        this.Data = Data || [];
     }
     NestedSet.prototype.setItem = function (itemId, itemData) {
         this.Data[itemId] = itemData;
@@ -70,9 +73,9 @@ var NestedSet = /** @class */ (function () {
     NestedSet.prototype.removeItem = function (itemId) {
         var _this = this;
         if (this.Data[itemId] !== undefined) {
-            this.Structure.forEach(function (node) {
-                if (node.itemId === itemId) {
-                    _this.removeNode(node._id);
+            this.Structure.map(function (n) {
+                if (n.itemId === itemId) {
+                    _this.removeNode(n._id);
                 }
             });
             delete this.Data[itemId];
@@ -237,18 +240,14 @@ var NestedSet = /** @class */ (function () {
         if (this.isEmpty(parentNode)) {
             return [];
         }
-        var parents = this.getNodes().filter(function (n) {
-            return n.lkey < parentNode.lkey && n.rkey > parentNode.rkey;
-        });
-        if (parents.length > 0) {
-            var results_1 = [];
-            parents.map(function (n) {
+        else {
+            return this.getNodes().filter(function (n) {
+                return n.lkey < parentNode.lkey && n.rkey > parentNode.rkey;
+            }).map(function (n) {
                 n.data = _this.Data[n.itemId];
-                results_1.push(n);
+                return n;
             });
-            parents = results_1;
         }
-        return parents;
     };
     NestedSet.prototype.getChilds = function (nodeId, depth) {
         var _this = this;
@@ -256,18 +255,14 @@ var NestedSet = /** @class */ (function () {
         if (this.isEmpty(parentNode)) {
             return [];
         }
-        var childs = this.getNodes().filter(function (n) {
-            return n.lkey >= parentNode.lkey && n.rkey <= parentNode.rkey && nodeId !== n._id && (depth === undefined ? true : n.depth <= (parentNode.depth + depth));
-        });
-        if (childs.length > 0) {
-            var results_2 = [];
-            childs.map(function (n) {
+        else {
+            return this.getNodes().filter(function (n) {
+                return n.lkey >= parentNode.lkey && n.rkey <= parentNode.rkey && nodeId !== n._id && (depth === undefined ? true : n.depth <= (parentNode.depth + depth));
+            }).map(function (n) {
                 n.data = _this.Data[n.itemId];
-                results_2.push(n);
+                return n;
             });
-            childs = results_2;
         }
-        return childs;
     };
     NestedSet.prototype.getBranch = function (nodeId) {
         var _this = this;
@@ -275,27 +270,21 @@ var NestedSet = /** @class */ (function () {
         if (this.isEmpty(parentNode)) {
             return [];
         }
-        var branch = this.getNodes().filter(function (n) {
-            return n.rkey > parentNode.lkey && n.lkey < parentNode.rkey;
-        });
-        if (branch.length > 0) {
-            var results_3 = [];
-            branch.map(function (n) {
+        else {
+            return this.getNodes().filter(function (n) {
+                return n.rkey > parentNode.lkey && n.lkey < parentNode.rkey;
+            }).map(function (n) {
                 n.data = _this.Data[n.itemId];
-                results_3.push(n);
+                return n;
             });
-            branch = results_3;
         }
-        return branch;
     };
     NestedSet.prototype.getTree = function () {
         var _this = this;
-        var results = [];
-        this.getNodes().map(function (n) {
+        return this.getNodes().map(function (n) {
             n.data = _this.Data[n.itemId];
-            results.push(n);
+            return n;
         });
-        return results;
     };
     NestedSet.prototype.clearAll = function () {
         this.Structure = [];
@@ -327,12 +316,10 @@ var NestedSet = /** @class */ (function () {
         return selectedNode.childs === 0;
     };
     NestedSet.prototype.getMaxRightKey = function () {
-        var maxRKey = Math.max.apply(Math, this.Structure.map(function (o) { return o.rkey; }));
-        return maxRKey;
+        return Math.max.apply(Math, this.Structure.map(function (o) { return o.rkey; }));
     };
     NestedSet.prototype.getMaxLeftKey = function () {
-        var maxLKey = Math.max.apply(Math, this.Structure.map(function (o) { return o.lkey; }));
-        return maxLKey;
+        return Math.max.apply(Math, this.Structure.map(function (o) { return o.lkey; }));
     };
     NestedSet.prototype.getCountNodes = function () {
         return this.Structure.length;
@@ -367,15 +354,11 @@ var NestedSet = /** @class */ (function () {
     };
     NestedSet.prototype.debug = function () {
         var _this = this;
-        var results = [];
-        this.getNodes().map(function (n) {
-            var s = ' ';
-            results.push(s.repeat(n.depth + 1) + '> ' + JSON.stringify(_this.Data[n.itemId]) + '(itemId:' + n.itemId + '; nodeId:' + n._id + '; lkey:' + n.lkey + '; rkey:' + n.rkey + '; depth:' + n.depth + '; childs:' + n.childs + ')');
-        });
-        return results;
+        return this.getNodes().map(function (n) { return String(' ').repeat(n.depth + 1) + '> ' + JSON.stringify(_this.Data[n.itemId]) + '(itemId:' + n.itemId + '; nodeId:' + n._id + '; lkey:' + n.lkey + '; rkey:' + n.rkey + '; depth:' + n.depth + '; childs:' + n.childs + ')'; });
     };
     return NestedSet;
 }());
+exports.NestedSet = NestedSet;
 module.exports = function () {
-    return new NestedSet([], []);
+    return new NestedSet();
 };
