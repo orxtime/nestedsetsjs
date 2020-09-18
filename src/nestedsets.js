@@ -46,7 +46,7 @@ module.exports = function () {
         return false
       }
 
-      var maxId = Math.max(..._ns.Structure.map(o => o._id)) || 0
+      var maxId = _ns.Structure.reduce((a,{_id}) => (a > _id ? a : _id), -Infinity)
 
       _ns.Structure = _ns.Structure.map(n => {
         if (n.lkey > parentNode.rkey) {
@@ -263,11 +263,11 @@ module.exports = function () {
   }
 
   _ns.getMaxRightKey = () => {
-    return Math.max(..._ns.Structure.map(o => o.rkey))
+    return _ns.Structure.reduce((a,{rkey}) => (a > rkey ? a : rkey), -Infinity)
   }
 
   _ns.getMaxLeftKey = () => {
-    return Math.max(..._ns.Structure.map(o => o.lkey))
+    return _ns.Structure.reduce((a,{lkey}) => (a > lkey ? a : lkey), -Infinity)
   }
 
   _ns.getCountNodes = () => {

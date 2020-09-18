@@ -411,6 +411,59 @@ describe('isLeaf', function () {
   })
 })
 
+describe('getMaxLeftKey', function () {
+  it('Checks MAX lkey', function () {
+    var NestedSet = ns()
+    NestedSet.setItem(1, 10000)
+    NestedSet.setItem(2, 20000)
+    NestedSet.setItem(3, 30000)
+
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    var childNodeId = NestedSet.addNode(parentNodeId, 3)
+
+    var childNode = NestedSet.getNode(childNodeId)
+    var mLkey = NestedSet.getMaxLeftKey()
+
+    assert.equal(childNode.lkey === mLkey, true)
+  })
+})
+
+describe('getMaxRightKey', function () {
+  it('Checks MAX rkey', function () {
+    var NestedSet = ns()
+    NestedSet.setItem(1, 10000)
+    NestedSet.setItem(2, 20000)
+    NestedSet.setItem(3, 30000)
+
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    var childNodeId = NestedSet.addNode(parentNodeId, 3)
+
+    var rootNode = NestedSet.getNode(rootNodeId)
+    var mRkey = NestedSet.getMaxRightKey()
+
+    assert.equal(rootNode.rkey === mRkey, true)
+  })
+})
+
+describe('getCountNodes', function () {
+  it('Checks count nodes', function () {
+    var NestedSet = ns()
+    NestedSet.setItem(1, 10000)
+    NestedSet.setItem(2, 20000)
+    NestedSet.setItem(3, 30000)
+
+    var rootNodeId = NestedSet.addRoot(1, 1)
+    var parentNodeId = NestedSet.addNode(rootNodeId, 2)
+    var childNodeId = NestedSet.addNode(parentNodeId, 3)
+
+    var count = NestedSet.getCountNodes()
+
+    assert.equal(count === 3, true)
+  })
+})
+
 describe('debug', function () {
   it('Displays information about nodes and items', function () {
     var NestedSet = ns()
