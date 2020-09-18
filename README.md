@@ -6,7 +6,6 @@
 ![License](https://img.shields.io/github/license/orxtime/nestedsetsjs.svg)
 
  Nested sets structure with separated items and nodes.
-
  Source here [Armasheko Artem / nestedsetsjs](https://github.com/orxtime/nestedsetsjs).
 
 :evergreen_tree:
@@ -42,69 +41,83 @@ console.log(NestedSet.debug())
 ```
 
 ## Methods
-
+---
 
 ### setItem(id, data)
-Sets data for an item
+Sets data for an item.
 - id - ID item
-- data - Stored data  
-Returns Stored data in Data propert
+- data - Stored data
+
 ```
 NestedSet.setItem(1, { title: "Root"})
 ```
-
+> Returns Stored data in Data propert.
 
 
 ### removeItem(id)
 Removes an item with its dependent nodes
-- id - ID item  
-Returns TRUE if item exists or FALSE if not exists
+- id - ID item
+
 ```
 NestedSet.removeItem(1)
 ```
+> Returns TRUE if item exists or FALSE if not exists
 
 
 ### addRoot(item_id)
 Initializes the Nested Sets structure. Adds a root node and sets an item for it
-- item_id - item ID  
-Returns node ID = 1
+- item_id - item ID
+
 ```
 NestedSet.addRoot(1)
 ```
+> Returns node ID = 1
 
 
 ### addNode(target_node_id, item_id)
 Adds a new node to the specified parent node and sets an item for it
 - target_node_id - parent node ID
-- item_id - item ID  
-Returns node ID
+- item_id - item ID
+
 ```
 NestedSet.addNode(1, 1)
 ```
+> Returns node ID
 
 
 ### getNode(node_id, asCopy)
 Gets a node by ID
 - node_id - node ID
-- asCopy - **true** (will return a copy of the object) / **false** or **undefined** (will return the object itself)  
-Returns node object
+- asCopy - **true** (will return a copy of the object) / **false** or **undefined** (will return the object itself)
+
 ```
 NestedSet.getNode(1)
 ```
+> Returns node object
 
 
 ### removeNode(node_id)
 Removes a node by its ID
 - node_id - node ID  
-Returns new Structure
+
 ```
 NestedSet.removeNode(1)
 ```
+> Returns updated Structure
 
+### moveNode(node_id, target_id)
+Removes a node by its ID
+- node_id - node ID
+- target_id - node ID
+
+```
+NestedSet.moveNode(5, 2)
+```
+> Returns new Structure
 
 
 ### getNodes ()
-Returns all nodes (Structure property)
+> Returns all nodes (Structure property)
 
 
 ### removeNodes()
@@ -113,44 +126,42 @@ Removes all nodes (items are not destroyed)
 
 
 ### getParent(node_id)
-Returns the first parent for the node
 - node_id - node ID
 
 ```
 NestedSet.getParent(5)
 ```
-
+> Returns the first parent for the node
 
 ### getParents(node_id)
-Returns all parents of the node
 - node_id - node ID
 
 ```
 NestedSet.getParents(5)
 ```
+> Returns all parents of the node
 
 
 ### getChilds(node_id, depth)
-Returns nested nodes in a node
 - node_id - node ID
 - depth - nesting depth
 
 ```
 NestedSet.getChilds(1, 1)
 ```
+> Returns nested nodes in a node
 
 
 ### getBranch(node_id)
-Returns the entire branch that contains the node
 - node_id - node ID
 
 ```
 NestedSet.getBranch(5)
 ```
-
+> Returns the entire branch that contains the node
 
 ### getTree()
-Returns the entire structure (nodes and items)
+> Returns the entire structure (nodes and items)
 
 
 ### clearAll()
@@ -160,25 +171,27 @@ Removes all items and all nodes
 ### isRoot(node_id)
 Checks if a node is root
 - node_id - node ID
+> if the node is Root, returns TRUE, otherwise FALSE
 
 
 ### isBranch(node_id)
 Checks if a node is a parent
 - node_id - node ID
-
+> if the node contains nested nodes, returns TRUE, otherwise FALSE
 
 ### isLeaf(node_id)
 Checks if a node is the end of a branch
 - node_id - node ID
+> if the node is end of bracnch, returns TRUE, otherwise FALSE
 
 ### getMaxRightKey
-Returns MAX right key in the tree
+> Returns MAX right key in the tree
 
 ### getMaxLeftKey
-Returns MAX left key in the tree
+> Returns MAX left key in the tree
 
 ### getCountNodes
-Returns count nodes of tree
+> Returns count nodes of tree
 
 
 ### checkTree()
@@ -190,9 +203,10 @@ Checks a tree according to three rules
 
 ### debug()
 Displays information about nodes and items
-
+> Returns array with nodes information
 
 ## Properties
+---
 - Data (Items)
 - Structure (Nodes)
 
@@ -230,4 +244,10 @@ npm test
 npm install
 npx eslint ./src/nestedsets.js
 npx eslint ./test/test.js
+```
+
+## Minify
+```
+npm install
+npm run minify
 ```
